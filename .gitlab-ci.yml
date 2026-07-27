@@ -1,0 +1,20 @@
+variables:
+  FTP_SERVER: "ftp.thesyndicates.team"
+  FTP_USERNAME: "thesyndicates@lia247-backend.thesyndicates.team"
+  FTP_PASSWORD: "_08mm4N{kaudoCSB"
+
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+
+  only:
+    - main
+
+  before_script:
+    - apk add --no-cache lftp
+
+  script:
+    - lftp -c "set ftp:ssl-allow no; open -u '$FTP_USERNAME','$FTP_PASSWORD' $FTP_SERVER; mirror -R ./ ./ --exclude .git/ --exclude .gitlab-ci.yml --exclude .github/ --exclude .env --exclude node_modules/ --exclude storage/logs/ --ignore-time --parallel=10"
