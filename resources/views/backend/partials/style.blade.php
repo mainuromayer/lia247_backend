@@ -126,7 +126,43 @@
 
     #timer {
         font-weight: bold;
-        color: #d9534f;
+        color: #000000;
+    }
+
+    /* Dark Mode Overrides for Dashboard Date & Clock */
+    html.dark-layout .dashboard-date {
+        color: #ffffff !important;
+        background: #283046 !important;
+        box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.25) !important;
+    }
+    html.dark-layout .dashboard-date i {
+        color: #ffffff !important;
+    }
+    html.dark-layout #timer {
+        color: #ffffff !important;
+    }
+
+    /* Tailwind Conflict Resolvers for Bootstrap Checkboxes & Toggles */
+    div.form-checkbox, div.form-check {
+        border: none !important;
+        background: transparent !important;
+        width: auto !important;
+        height: auto !important;
+        box-shadow: none !important;
+        appearance: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .form-switch .form-check-input {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(0, 0, 0, 0.25)'/%3e%3c/svg%3e") !important;
+        background-position: left center !important;
+        border-radius: 2em !important;
+        transition: background-position 0.15s ease-in-out !important;
+    }
+    .form-switch .form-check-input:checked {
+        background-position: right center !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e") !important;
     }
 </style>
 

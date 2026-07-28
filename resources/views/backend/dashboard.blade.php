@@ -29,7 +29,7 @@
                                 <p class="mb-0">Your platform performance at a glance.</p>
                             </div>
                             <div class="d-none d-md-block">
-                                <img src="{{ asset('backend/app-assets/images/illustration/email.svg') }}" alt="welcome" width="80">
+                                <i data-feather="award" style="width: 70px; height: 70px; stroke-width: 1.5; color: rgba(255, 255, 255, 0.9);"></i>
                             </div>
                         </div>
                     </div>
@@ -249,7 +249,6 @@
 @endsection
 
 @push('script')
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const allChartData = {!! $allChartData !!};

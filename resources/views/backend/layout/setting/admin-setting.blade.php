@@ -1,6 +1,5 @@
 @extends('backend.app')
 @push('style')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css" />
     <style>
         .dropify-wrapper{
             height: inherit !important;
@@ -54,24 +53,13 @@
                         </div>
                         <div class="col-lg-10">
                             <div class="row">
-                                <div class="col-lg-6 col-6">
+                                <div class="col-lg-12 col-12">
                                     <div class="form-group">
                                         <label for="first-name-column">Title</label>
                                         <input type="text" id="admin_title" class="form-control"
                                             value="{{ $setting->admin_title ?? '' }}" placeholder="Admin Title"
                                             name="admin_title" />
                                         @error('admin_title')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-5">
-                                    <div class="form-group">
-                                        <label for="first-name-column">Short Title</label>
-                                        <input type="text" id="admin_short_title" class="form-control"
-                                            value="{{ $setting->admin_short_title ?? '' }}" placeholder="Admin Short Title"
-                                            name="admin_short_title" />
-                                        @error('admin_short_title')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -101,13 +89,3 @@
     </div>
 
 @endsection
-
-
-@push('script')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
-
-    <script>
-        $('.dropify').dropify();
-    </script>
-@endpush

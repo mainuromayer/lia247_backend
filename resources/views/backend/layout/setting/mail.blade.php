@@ -33,7 +33,7 @@
                                                 <div class="col">
                                                     <label class="form-lable">MAIL MAILER</label>
                                                     <input type="text"
-                                                        class="form-control form-control-md border-left-0 @error('mail_mailer') is-invalid @enderror"
+                                                        class="form-control form-control-md @error('mail_mailer') is-invalid @enderror"
                                                         placeholder="MAIL MAILER" name="mail_mailer"
                                                         value="{{ env('MAIL_MAILER') }}" required>
                                                     @error('mail_mailer')
@@ -41,11 +41,11 @@
                                                             <strong>{{ $message }}</strong>
                                                         </span>
                                                     @enderror
-                                                </div>
+                                                </div>  
                                                 <div class="col">
                                                     <label class="form-lable">MAIL HOST</label>
                                                     <input type="text"
-                                                        class="form-control form-control-md border-left-0 @error('mail_host') is-invalid @enderror"
+                                                        class="form-control form-control-md @error('mail_host') is-invalid @enderror"
                                                         placeholder="MAIL HOST" name="mail_host"
                                                         value="{{ env('MAIL_HOST') }}" required>
                                                     @error('mail_host')
@@ -59,7 +59,7 @@
                                                 <div class="col">
                                                     <label class="form-lable">MAIL PORT</label>
                                                     <input type="text"
-                                                        class="form-control form-control-md border-left-0 @error('mail_port') is-invalid @enderror"
+                                                        class="form-control form-control-md @error('mail_port') is-invalid @enderror"
                                                         placeholder="MAIL PORT" name="mail_port"
                                                         value="{{ env('MAIL_PORT') }}" required>
                                                     @error('mail_port')
@@ -71,7 +71,7 @@
                                                 <div class="col">
                                                     <label class="form-lable">MAIL USERNAME</label>
                                                     <input type="text"
-                                                        class="form-control form-control-md border-left-0 @error('mail_username') is-invalid @enderror"
+                                                        class="form-control form-control-md @error('mail_username') is-invalid @enderror"
                                                         placeholder="MAIL USERNAME" name="mail_username"
                                                         value="{{ env('MAIL_USERNAME') }}" required>
                                                     @error('mail_username')
@@ -85,7 +85,7 @@
                                                 <div class="col">
                                                     <label class="form-lable">MAIL PASSWORD</label>
                                                     <input type="text"
-                                                        class="form-control form-control-md border-left-0 @error('mail_password') is-invalid @enderror"
+                                                        class="form-control form-control-md @error('mail_password') is-invalid @enderror"
                                                         placeholder="MAIL PASSWORD" name="mail_password"
                                                         value="{{ env('MAIL_PASSWORD') }}" required>
                                                     @error('mail_password')
@@ -97,7 +97,7 @@
                                                 <div class="col">
                                                     <label class="form-lable">MAIL ENCRYPTION</label>
                                                     <input type="text"
-                                                        class="form-control form-control-md border-left-0 @error('mail_encryption') is-invalid @enderror"
+                                                        class="form-control form-control-md @error('mail_encryption') is-invalid @enderror"
                                                         placeholder="MAIL ENCRYPTION" name="mail_encryption"
                                                         value="{{ env('MAIL_ENCRYPTION') }}" required>
                                                     @error('mail_encryption')
@@ -111,7 +111,7 @@
                                                 <div class="col-6">
                                                     <label class="form-lable">MAIL FROM ADDRESS</label>
                                                     <input type="text"
-                                                        class="form-control form-control-md border-left-0 @error('mail_from_address') is-invalid @enderror"
+                                                        class="form-control form-control-md @error('mail_from_address') is-invalid @enderror"
                                                         placeholder="MAIL FROM ADDRESS" name="mail_from_address"
                                                         value="{{ env('MAIL_FROM_ADDRESS') }}" required>
                                                     @error('mail_from_address')

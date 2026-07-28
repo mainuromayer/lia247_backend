@@ -1,6 +1,5 @@
 @extends('backend.app')
 @push('style')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css" />
     <style>
         .dropify-wrapper {
             height: inherit !important;
@@ -48,34 +47,13 @@
                         </div>
                         <div class="col-lg-10">
                             <div class="row">
-                                <div class="col-md-4 col-12">
+                                <div class="col-md-12 col-12">
                                     <div class="form-group">
                                         <label for="first-name-column">Title</label>
                                         <input type="text" id="system_title" class="form-control"
                                             value="{{ $setting->system_title ?? '' }}" placeholder="System title"
                                             name="system_title" />
                                         @error('system_title')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-12">
-                                    <div class="form-group">
-                                        <label for="first-name-column">Short Title</label>
-                                        <input type="text" id="title" class="form-control"
-                                            value="{{ $setting->system_short_title ?? '' }}" placeholder="System title"
-                                            name="system_short_title" />
-                                        @error('system_short_title')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-12">
-                                    <div class="form-group">
-                                        <label for="city-column">Tag Line</label>
-                                        <input type="text" id="tag_line" class="form-control"
-                                            value="{{ $setting->tag_line ?? '' }}" placeholder="Tag" name="tag_line" />
-                                        @error('tag_line')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -97,11 +75,9 @@
                                         <div class="input-group">
                                             <select class="custom-select select2-size-lg" id="country-code"
                                                 name="phone_code">
-                                                <option value="+1" {{ $setting?->phone_code === '+1' ? 'selected' : '' }}>+1
-                                                    (USA)
-                                                </option>
-                                                <option value="+1" {{ $setting?->phone_code === '+1' ? 'selected' : '' }}>+1
-                                                    (Canada)</option>
+                                                <option value="+1" {{ $setting?->phone_code === '+1' ? 'selected' : '' }}>+1 (United States)</option>
+                                                <option value="+1242" {{ $setting?->phone_code === '+1242' ? 'selected' : '' }}>+1-242 (Bahamas)</option>
+                                                <option value="+1" {{ $setting?->phone_code === '+1' ? 'selected' : '' }}>+1 (Canada)</option>
                                                 <option value="+44" {{ $setting?->phone_code === '+44' ? 'selected' : '' }}>
                                                     +44
                                                     (United Kingdom)</option>
@@ -298,13 +274,4 @@
             </div>
         </div>
     </div>
-
-    @push('script')
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
-
-        <script>
-            $('.dropify').dropify();
-        </script>
-    @endpush
 @endsection

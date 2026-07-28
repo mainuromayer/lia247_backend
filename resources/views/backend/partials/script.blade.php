@@ -22,7 +22,7 @@
 
 <!-- BEGIN: Page JS-->
 @if(request()->routeIs('admin.dashboard'))
-<script src="{{ asset('backend/app-assets/js/scripts/pages/dashboard-ecommerce.js') }}"></script>
+{{-- <script src="{{ asset('backend/app-assets/js/scripts/pages/dashboard-ecommerce.js') }}"></script> --}}
 @endif
 <!-- END: Page JS-->
 
