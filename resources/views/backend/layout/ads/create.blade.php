@@ -3,7 +3,6 @@
 @section('title', 'Add New Ad')
 
 @push('style')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css" />
     <style>
         .premium-card { border: none; border-radius: 12px; box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1); transition: all 0.3s ease; background: #fff; }
         .form-label { font-weight: 600; color: #5e5873; font-size: 0.9rem; }
@@ -37,22 +36,28 @@
                     @csrf
                     
                     <div class="row">
-                        <div class="col-md-8">
-                            <div class="card premium-card border-top-primary border-3">
-                                <div class="card-header bg-transparent border-bottom">
-                                    <h4 class="card-title text-primary">
-                                        <i class="fa-solid fa-image me-1"></i> Advertisement Details
-                                    </h4>
-                                </div>
-                                <div class="card-body pt-2">
+                        <div class="col-12">
+                            <div class="card premium-card">
+                                <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-12 mb-2">
+                                        <div class="col-md-6 mb-2">
                                             <label class="form-label" for="url">Redirection URL (Optional)</label>
                                             <div class="input-group input-group-merge">
                                                 <span class="input-group-text"><i class="fa-solid fa-link"></i></span>
                                                 <input type="url" name="url" id="url" class="form-control" value="{{ old('url') }}" placeholder="https://example.com/promo">
                                             </div>
                                             <small class="text-muted">Where the user will be taken when they click the ad.</small>
+                                        </div>
+
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label" for="is_active">Status</label>
+                                            <select name="is_active" id="is_active" class="form-control">
+                                                <option value="1" {{ old('is_active', '1') == '1' ? 'selected' : '' }}>Active</option>
+                                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Inactive</option>
+                                            </select>
+                                            @error('is_active')
+                                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                            @enderror
                                         </div>
 
                                         <div class="col-md-6 mb-2">
@@ -77,41 +82,9 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="card premium-card border-top-warning border-3">
-                                <div class="card-header bg-transparent border-bottom">
-                                    <h4 class="card-title text-warning">
-                                        <i class="fa-solid fa-circle-info me-1"></i> Instructions
-                                    </h4>
-                                </div>
-                                <div class="card-body pt-2">
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item bg-transparent px-0">
-                                            <strong>Visibility:</strong> New ads are active by default. You can toggle them later from the list.
-                                        </li>
-                                        <li class="list-group-item bg-transparent px-0">
-                                            <strong>Formats:</strong> Use PNG or JPG for best compatibility. WebP is also supported.
-                                        </li>
-                                        <li class="list-group-item bg-transparent px-0">
-                                            <strong>Redirection:</strong> If no URL is provided, the ad will only show without being clickable.
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-@push('script')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.dropify').dropify();
-        });
-    </script>
-@endpush
 @endsection

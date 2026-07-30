@@ -154,7 +154,20 @@
         margin: 0 !important;
     }
 
+    /* Restore Bootstrap's left padding for form controls so labels do not overlap */
+    div.form-check {
+        padding-left: 2.75em !important;
+    }
+
+    /* Keep checkboxes in datatables centered without padding-left offsets */
+    table div.form-check, table div.form-checkbox {
+        padding-left: 0 !important;
+    }
+
     .form-switch .form-check-input {
+        width: 2.5em !important;
+        height: 1.25em !important;
+        background-size: contain !important;
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(0, 0, 0, 0.25)'/%3e%3c/svg%3e") !important;
         background-position: left center !important;
         border-radius: 2em !important;

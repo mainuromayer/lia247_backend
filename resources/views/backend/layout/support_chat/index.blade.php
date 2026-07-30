@@ -34,7 +34,7 @@
                                         @forelse($customers as $customer)
                                         <a href="{{ route('admin.support_chat.show', $customer->id) }}" class="list-group-item list-group-item-action border-0 px-2 py-1 d-flex align-items-center gap-3">
                                             <div class="avatar m-0 mr-1 position-relative">
-                                                <img src="{{ $customer->avatar ? asset($customer->avatar) : asset('backend/assets/images/default-avatar.png') }}" 
+                                                <img src="{{ $customer->avatar ? asset($customer->avatar) : asset('uploads/systems/logo/default_avatar.png') }}" 
                                                      height="45" width="45" class="rounded-circle border" alt="avatar">
                                                 @if($customer->unread_count > 0)
                                                     <span class="badge badge-up badge-danger badge-pill badge-sm" style="right: -2px; top: -2px;">{{ $customer->unread_count }}</span>

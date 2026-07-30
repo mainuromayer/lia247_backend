@@ -311,14 +311,6 @@ class RideController extends Controller
             $split = CommissionService::calculateRideSplit($subtotal, $driverPayoutPercent);
             
             $ride->commission_amount = $split['admin_amount'] + $vatAmount;
-            $ride->save();
-
-            broadcast(new RideStatusUpdated($ride));
-            $rider = auth('api')->user() ?? Auth::user();
-            if ($rider) {
-                broadcast(new RiderStatusUpdated($rider));
-            }
-
             // Credit rider's wallet and debit admin's wallet
             if ($split['rider_amount'] > 0) {
                 $admin = User::where('user_type', 'admin')->first();
@@ -356,6 +348,12 @@ class RideController extends Controller
             );
 
             DB::commit();
+
+            broadcast(new RideStatusUpdated($ride));
+            $rider = auth('api')->user() ?? Auth::user();
+            if ($rider) {
+                broadcast(new RiderStatusUpdated($rider));
+            }
 
             return $this->success(new RideResource($ride), 'Ride completed and earnings added to wallet');
         } catch (Exception $e) {
@@ -613,7 +611,7 @@ class RideController extends Controller
 
             foreach ($rides as $ride) {
                 // Broadcast the location update for each active ride
-                broadcast(new RideLocationUpdated($ride->id, $request->latitude, $request->longitude));
+                broadcast(new RideLocationUpdated($ride->id, $request->latitude, $request->longitude))->toOthers();
             }
 
             return $this->success([

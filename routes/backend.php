@@ -217,6 +217,8 @@ Route::group(['prefix' => 'support-chat', 'as' => 'admin.support_chat.'], functi
         Route::get('/', 'index')->name('index');
         Route::get('/show/{id}', 'show')->name('show');
         Route::post('/send/{id}', 'sendMessage')->name('send');
+        Route::post('/message/{id}/update', 'updateMessage')->name('update_message');
+        Route::post('/message/{id}/delete', 'deleteMessage')->name('delete_message');
     });
 });
 

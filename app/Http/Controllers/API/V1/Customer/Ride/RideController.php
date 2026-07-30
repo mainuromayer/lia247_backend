@@ -336,9 +336,10 @@ class RideController extends Controller
             
             $ride->save();
 
+            DB::commit();
+
             broadcast(new RideStatusUpdated($ride));
 
-            DB::commit();
             return $this->success(new RideResource($ride), 'Ride canceled successfully');
         } catch (Exception $e) {
             DB::rollBack();

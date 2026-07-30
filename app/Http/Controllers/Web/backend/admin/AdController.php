@@ -67,11 +67,13 @@ class AdController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'video' => 'nullable|mimes:mp4,mov,ogg,qt|max:20480',
             'url' => 'nullable|url',
+            'is_active' => 'required|in:0,1',
         ]);
 
         try {
             $ad = new Ad();
             $ad->url = $request->url;
+            $ad->is_active = $request->is_active;
 
             if ($request->hasFile('image')) {
                 $ad->image = Helper::fileUpload($request->file('image'), 'ads/images', 'ad-img-' . time());
@@ -105,10 +107,12 @@ class AdController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'video' => 'nullable|mimes:mp4,mov,ogg,qt|max:20480',
             'url' => 'nullable|url',
+            'is_active' => 'required|in:0,1',
         ]);
 
         try {
             $ad->url = $request->url;
+            $ad->is_active = $request->is_active;
 
             if ($request->hasFile('image')) {
                 Helper::deleteFile($ad->getRawOriginal('image'));

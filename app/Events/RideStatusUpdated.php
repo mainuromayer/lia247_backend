@@ -31,12 +31,10 @@ class RideStatusUpdated implements ShouldBroadcastNow
     {
         return [
             'id' => $this->ride->id,
+            'ride_no' => $this->ride->ride_no,
             'status' => $this->ride->status,
+            'payment_status' => $this->ride->payment_status,
             'rider_id' => $this->ride->rider_id,
-            'user_id' => $this->ride->user_id,
-            'estimated_fare' => $this->ride->estimated_fare,
-            'actual_fare' => $this->ride->actual_fare,
-            'total_amount' => $this->ride->total_amount,
             'updated_at' => $this->ride->updated_at ? $this->ride->updated_at->format('Y-m-d H:i:s') : now()->format('Y-m-d H:i:s'),
         ];
     }

@@ -48,7 +48,17 @@ class SupportChatController extends Controller
             ->where('is_read_by_admin', false)
             ->update(['is_read_by_admin' => true]);
 
-        return view('backend.layout.support_chat.show', compact('customer', 'messages'));
+        $customers = User::where('user_type', 'customer')
+            ->whereHas('supportChats')
+            ->withCount(['supportChats as unread_count' => function ($query) {
+                $query->where('sender_type', 'customer')->where('is_read_by_admin', false);
+            }])
+            ->with(['supportChats' => function ($query) {
+                $query->latest()->limit(1);
+            }])
+            ->get();
+
+        return view('backend.layout.support_chat.show', compact('customer', 'messages', 'customers'));
     }
 
     /**
@@ -86,6 +96,71 @@ class SupportChatController extends Controller
         } catch (Exception $e) {
             flash()->error('Failed to send reply: ' . $e->getMessage());
             return back();
+        }
+    }
+
+    /**
+     * Update a support chat message.
+     */
+    public function updateMessage(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'message' => 'required|string',
+            ]);
+
+            $chat = SupportChat::findOrFail($id);
+
+            // Ensure only admin messages can be edited by admin
+            if ($chat->sender_type !== 'admin') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only edit admin messages.'
+                ], 403);
+            }
+
+            $chat->message = $request->message;
+            $chat->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Message updated successfully.',
+                'data' => $chat
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update message: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete a support chat message.
+     */
+    public function deleteMessage($id)
+    {
+        try {
+            $chat = SupportChat::findOrFail($id);
+
+            // Delete associated files if any
+            if (!empty($chat->files)) {
+                Helper::deleteFile($chat->files);
+            }
+
+            $chat->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Message deleted successfully.'
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete message: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

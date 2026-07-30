@@ -64,7 +64,7 @@ const initEchoListeners = () => {
     const orderId = getDynamicParam('order_id', 49);
     const customerId = getDynamicParam('customer_id', 9);
     const vendorId = getDynamicParam('vendor_id', 3);
-    const rideId = getDynamicParam('ride_id', 25);
+    const rideId = getDynamicParam('ride_id', 43);
     const deliveryManId = getDynamicParam('delivery_man_id', 5);
     const riderId = getDynamicParam('rider_id', 4);
 
