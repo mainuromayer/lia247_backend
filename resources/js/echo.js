@@ -3,13 +3,17 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 window.Pusher = Pusher;
 
+const reverbHost = import.meta.env.VITE_REVERB_HOST || window.location.hostname;
+const reverbPort = import.meta.env.VITE_REVERB_PORT ? Number(import.meta.env.VITE_REVERB_PORT) : 8083;
+const reverbScheme = import.meta.env.VITE_REVERB_SCHEME || 'http';
+
 window.Echo = new Echo({
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
-    wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
-    wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+    wsHost: reverbHost,
+    wsPort: reverbPort,
+    wssPort: reverbPort,
+    forceTLS: reverbScheme === 'https',
     enabledTransports: ['ws', 'wss'],
 });
 
@@ -62,9 +66,9 @@ const getDynamicParam = (key, defaultValue) => {
 const initEchoListeners = () => {
     // ================= DYNAMIC PARAMETERS =================
     const orderId = getDynamicParam('order_id', 49);
-    const customerId = getDynamicParam('customer_id', 9);
+    const customerId = getDynamicParam('customer_id', 2);
     const vendorId = getDynamicParam('vendor_id', 3);
-    const rideId = getDynamicParam('ride_id', 43);
+    const rideId = getDynamicParam('ride_id', 5);
     const deliveryManId = getDynamicParam('delivery_man_id', 5);
     const riderId = getDynamicParam('rider_id', 4);
 

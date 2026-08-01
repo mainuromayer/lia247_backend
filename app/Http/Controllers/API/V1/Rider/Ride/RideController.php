@@ -7,6 +7,7 @@ use App\Events\RideLocationUpdated;
 use App\Events\RiderStatusUpdated;
 use App\Events\RideStatusUpdated;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\V1\Rider\Ride\NearbyRidesRequest;
 use App\Http\Requests\API\V1\Rider\Ride\RideCompleteRequest;
 use App\Http\Requests\API\V1\Rider\Ride\RideStatusUpdateRequest;
 use App\Http\Resources\API\V1\Customer\Ride\RideResource;
@@ -38,12 +39,16 @@ class RideController extends Controller
     /**
      * List Pending Ride Requests (Nearby Rides)
      */
-    public function nearbyRides()
+    public function nearbyRides(NearbyRidesRequest $request)
     {
         $rider = auth('api')->user() ?? Auth::user();
         if (!$rider || !$rider->is_online) {
             return $this->error([], 'You are currently offline or unauthorized. Please go online to view nearby rides.', 403);
         }
+
+        // Accept radius in KM from request (e.g. 50, 100, 200)
+        $maxRadius = $request->input('radius');
+        $maxRadius = ($maxRadius !== null && $maxRadius !== '') ? (float) $maxRadius : null;
 
         $balance = $this->getRiderBalance($rider);
 
@@ -55,12 +60,45 @@ class RideController extends Controller
             ->latest()
             ->get();
 
-        // Filter rides by balance (Stripe + Local)
-        $rides = $rides->filter(function ($ride) use ($balance) {
-            return $balance >= $ride->estimated_fare;
+        // Filter rides by distance radius if radius parameter is provided
+        $rides = $rides->filter(function ($ride) use ($rider, $maxRadius) {
+            if ($maxRadius !== null && $rider->latitude && $rider->longitude && $ride->pickup_lat && $ride->pickup_lng) {
+                $dist = $this->calculateHaversineDistance(
+                    $rider->latitude,
+                    $rider->longitude,
+                    $ride->pickup_lat,
+                    $ride->pickup_lng
+                );
+                return $dist <= $maxRadius;
+            }
+
+            return true;
         });
 
-        return $this->success(RideResource::collection($rides), 'Nearby rides retrieved');
+        return $this->success(RideResource::collection($rides->values()), 'Nearby rides retrieved');
+    }
+
+    /**
+     * Calculate distance between two coordinate points in KM (Haversine formula)
+     */
+    private function calculateHaversineDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        if (is_null($lat1) || is_null($lon1) || is_null($lat2) || is_null($lon2)) {
+            return 0;
+        }
+
+        $earthRadius = 6371; // Earth radius in KM
+
+        $latDelta = deg2rad($lat2 - $lat1);
+        $lonDelta = deg2rad($lon2 - $lon1);
+
+        $a = sin($latDelta / 2) * sin($latDelta / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($lonDelta / 2) * sin($lonDelta / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
     }
 
     /**
@@ -346,6 +384,8 @@ class RideController extends Controller
                 'customer',
                 ['ride_id' => $ride->id, 'fare' => $ride->total_amount]
             );
+
+            $ride->save();
 
             DB::commit();
 

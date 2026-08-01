@@ -139,13 +139,13 @@ class RideController extends Controller
             /** @var \App\Models\User $user */
             $user = auth('api')->user();
 
-            $hasPendingRide = Ride::where('user_id', $user->id)
-                ->where('status', 'pending')
+            $hasActiveRide = Ride::where('user_id', $user->id)
+                ->whereNotIn('status', ['completed', 'canceled', 'no_show'])
                 ->exists();
 
-            if ($hasPendingRide) {
+            if ($hasActiveRide) {
                 DB::rollBack();
-                return $this->error([], 'You already have a pending ride request.', 400);
+                return $this->error([], 'You already have an active or pending ride request. Please complete or cancel your existing ride before requesting a new one.', 400);
             }
 
             $payment_type = $request->payment_type;
