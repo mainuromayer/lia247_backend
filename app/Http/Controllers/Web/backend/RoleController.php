@@ -15,7 +15,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::get();
+        $roles = Role::whereIn('name', ['admin', 'sub_admin'])->orWhere('guard_name', 'web')->whereNotIn('name', ['customer', 'vendor', 'rider', 'delivery_man'])->get();
         return view('backend.layout.role_permissions.role.index', get_defined_vars());
     }
 
@@ -36,21 +36,15 @@ class RoleController extends Controller
         $request->validate([
             'name' => 'required|unique:roles,name',
         ]);
+
+        if (strtolower($request->name) === 'admin' || strtolower($request->name) === 'super admin' || strtolower($request->name) === 'super_admin') {
+            return redirect()->back()->with('error', 'Super Admin is a pre-defined system role and cannot be recreated.')->withInput();
+        }
+
         $role = Role::create(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
-        flash()->success('Role Created Successfully!');
+        $role->syncPermissions($request->permissions ?? []);
 
-        return redirect()->route('admin.role.list');
-
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show()
-    {
-      
+        return redirect()->route('admin.role.list')->with('success', 'Role Created Successfully!');
     }
 
     /**
@@ -59,7 +53,7 @@ class RoleController extends Controller
     public function edit(string $id)
     {
         $permissions = Permission::get();
-        $role = Role::find($id);
+        $role = Role::findOrFail($id);
         $rolePermissions = DB::table('role_has_permissions')
             ->where('role_has_permissions.role_id', $role->id)
             ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
@@ -73,12 +67,11 @@ class RoleController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'permissions' => 'required|array',
+            'permissions' => 'nullable|array',
         ]);
-        $role = Role::find($id);
-        $role->syncPermissions($request->permissions);
-        flash()->success('Add Permissions Succefully!');
-        return redirect()->route('admin.role.list');
+        $role = Role::findOrFail($id);
+        $role->syncPermissions($request->permissions ?? []);
+        return redirect()->route('admin.role.list')->with('success', 'Permissions Updated Successfully!');
     }
 
     /**
@@ -95,6 +88,14 @@ class RoleController extends Controller
                     'message' => 'Role not found.',
                 ], 404);
             }
+
+            if (in_array(strtolower($role->name), ['admin', 'super admin', 'super_admin'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Super Admin is a pre-defined system role and cannot be deleted.',
+                ], 403);
+            }
+
             $role->delete();
 
             return response()->json([

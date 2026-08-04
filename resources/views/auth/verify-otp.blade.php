@@ -29,9 +29,10 @@
                                 <form class="auth-login-form mt-2" action="{{ route('password.otp.verify') }}"
                                     method="POST">
                                     @csrf
+                                    <input type="hidden" name="email" value="{{ session('email') ?? old('email') }}">
                                     <div class="form-group">
                                         <label for="login-email" class="form-label">Verify OTP</label>
-                                        <p>Enter the 6-digit code sent to
+                                        <p>Enter the 4-digit code sent to
                                             <strong>{{ session('email') ?? old('email') }}</strong>
                                         </p>
                                         @if (session('status'))
@@ -41,13 +42,17 @@
 
                                         <input type="text" name="otp"
                                             class="form-control @error('otp') is-invalid @enderror" required
-                                            autocomplete="one-time-code" inputmode="numeric" pattern="\d{6}">
+                                            autocomplete="one-time-code" inputmode="numeric" pattern="\d{4}">
                                         @error('otp') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                     </div>
 
 
                                     <button class="btn btn-primary btn-block" tabindex="4"> Verify OTP</button>
                                 </form>
+
+                                <p class="text-center mt-2">
+                                    <a href="{{ route('login') }}"> <i data-feather="chevron-left"></i> Back to login </a>
+                                </p>
 
 
                             </div>

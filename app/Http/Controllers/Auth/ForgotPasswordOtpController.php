@@ -7,6 +7,7 @@ use App\Mail\OtpMail;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
@@ -18,6 +19,12 @@ class ForgotPasswordOtpController extends Controller
         $request->validate(['email' => 'required|email|exists:users,email']);
 
         $user = User::where('email', $request->email)->first();
+
+        if (!$user || (!$user->is_admin && $user->user_type !== 'admin')) {
+            throw ValidationException::withMessages([
+                'email' => 'This email does not belong to an admin account.',
+            ]);
+        }
 
         // Generate 4-digit OTP
         $otp = rand(1000, 9999);
@@ -78,13 +85,21 @@ class ForgotPasswordOtpController extends Controller
 
         $user = User::where('email', session('reset_email'))->firstOrFail();
 
+        if (!$user->is_admin && $user->user_type !== 'admin') {
+            session()->forget(['password_reset_allowed', 'reset_email']);
+            return redirect()->route('login')->with('error', 'Unauthorized access.');
+        }
+
         $user->password = Hash::make($request->password);
         $user->save();
 
         // Clean session
         session()->forget(['password_reset_allowed', 'reset_email']);
 
-        return redirect()->route('login')
-            ->with('status', 'Password has been reset successfully. Please login.');
+        // Log in the user automatically
+        Auth::login($user);
+
+        return redirect()->route('admin.dashboard')
+            ->with('status', 'Password has been reset successfully. Welcome to your dashboard.');
     }
 }

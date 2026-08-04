@@ -165,6 +165,19 @@ Route::prefix('role')->controller(RoleController::class)->group(function () {
     Route::delete('/destroy/{id}', 'destroy')->name('admin.role.destroy');
 });
 
+// Sub Admin Management Routes
+Route::group(['prefix' => 'sub-admins', 'as' => 'admin.sub_admin.'], function () {
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/store', 'store')->name('store');
+        Route::get('/edit/{id}', 'edit')->name('edit');
+        Route::post('/update/{id}', 'update')->name('update');
+        Route::get('/status/{id}', 'status')->name('status');
+        Route::delete('/destroy/{id}', 'destroy')->name('destroy');
+    });
+});
+
 // Delivery Options Route
 Route::group(['prefix' => 'delivery-options', 'as' => 'admin.delivery_options.'], function () {
     Route::controller(DeliveryOptionController::class)->group(function () {

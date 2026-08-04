@@ -50,6 +50,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if (!$user->is_admin && !in_array($user->user_type, ['admin', 'sub_admin']) && !$user->hasAnyRole(['admin', 'sub_admin'])) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Access denied. Only admin users can log in here.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

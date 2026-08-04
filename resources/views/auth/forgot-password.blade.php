@@ -45,6 +45,10 @@
                                     <button class="btn btn-primary btn-block" tabindex="4">Send OTP</button>
                                 </form>
 
+                                <p class="text-center mt-2">
+                                    <a href="{{ route('login') }}"> <i data-feather="chevron-left"></i> Back to login </a>
+                                </p>
+
 
                             </div>
                         </div>

@@ -78,7 +78,7 @@
                                         </div> -->
                                     <button class="btn btn-primary btn-block" tabindex="4">Sign in</button>
                                 </form>
-                                <button type="button" class="btn btn-outline-secondary btn-block mt-1" id="btn-demo-credentials">Demo Admin Credentials</button>
+                                <!-- <button type="button" class="btn btn-outline-secondary btn-block mt-1" id="btn-demo-credentials">Demo Admin Credentials</button> -->
 
                                 <!-- <p class="text-center mt-2">
                                         <span>New on our platform?</span>

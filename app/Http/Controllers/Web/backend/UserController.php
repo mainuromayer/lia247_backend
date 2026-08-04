@@ -33,50 +33,50 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::where('is_admin', false)->where('id', '!=', Auth::id())->latest();
+            $data = User::where('id', '!=', Auth::id())
+                ->where(function($query) {
+                    $query->where('user_type', 'sub_admin')
+                          ->orWhereHas('roles', function($q) {
+                              $q->where('name', '!=', 'admin');
+                          });
+                })->latest();
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('name', function ($data) {
+                    return $data->name ?? ($data->first_name . ' ' . $data->last_name);
+                })
+                ->addColumn('role', function ($data) {
+                    $roles = $data->getRoleNames()->toArray();
+                    if (count($roles) > 0) {
+                        return implode(', ', array_map(function($r) {
+                            return ucwords(str_replace('_', ' ', $r));
+                        }, $roles));
+                    }
+                    return 'Sub Admin';
+                })
                 ->addColumn('status', function ($data) {
-                $status = $data->status;
-                return '<div class="form-check form-switch mb-2">
-                            <input class="form-check-input" onclick="showStatusChangeAlert(' . $data->id . ')" type="checkbox" ' . ($status == 'active' ? 'checked' : '') . '>
-                        </div>';
-            })
-                ->addColumn('bulk_check', function ($data) {
-                return Helper::tableCheckbox($data->id);
-            })
+                    $status = $data->status;
+                    return '<div class="form-check form-switch mb-2">
+                                <input class="form-check-input" onclick="showStatusChangeAlert(' . $data->id . ')" type="checkbox" ' . ($status == 'active' ? 'checked' : '') . '>
+                            </div>';
+                })
                 ->addColumn('action', function ($data) {
-                $editButton = '';
-                if (Auth::user()->is_admin) {
-                    $editRoute = route('user.edit', ['id' => $data->id]);
+                    $editRoute = route('admin.sub_admin.edit', ['id' => $data->id]);
                     $editButton = ' <a class="btn btn-sm btn-info" href="' . $editRoute . '">
-                                        <i class="fa-solid fa-pencil"></i>
+                                        <i class="fa fa-pencil"></i>
                                     </a>';
-                }
 
-                $viewButton = '';
-                if (Auth::user()->is_admin) {
-                    $viewRoute = route('show.user', ['id' => $data->id]);
-                    $viewButton = ' <a class="btn btn-sm btn-primary" href="' . $viewRoute . '">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </a>';
-                }
-
-                $deleteButton = '';
-                if (Auth::user()->is_admin) {
-                    $deleteButton = '<button type="button" onclick="deleteUser(' . $data->id . ')" class="btn btn-sm btn-danger">
-                                        <i class="fa-regular fa-circle-xmark"></i>
+                    $deleteButton = '<button type="button" onclick="deleteSubAdmin(' . $data->id . ')" class="btn btn-sm btn-danger ml-1">
+                                        <i class="fa fa-trash"></i>
                                      </button>';
-                }
 
-                return '<div>
-                            ' . $editButton . '
-                            ' . $viewButton . '
-                            ' . $deleteButton . '
-                        </div>';
-            })
+                    return '<div>
+                                ' . $editButton . '
+                                ' . $deleteButton . '
+                            </div>';
+                })
 
-                ->rawColumns(['bulk_check', 'status', 'action'])
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
 
@@ -85,144 +85,81 @@ class UserController extends Controller
 
     public function create()
     {
-        $data['roles'] = Role::all();
+        $data['roles'] = Role::whereIn('name', ['admin', 'sub_admin'])->orWhere('guard_name', 'web')->whereNotIn('name', ['customer', 'vendor', 'rider', 'delivery_man'])->get();
         return view('backend.layout.user.create', $data);
     }
 
     public function store(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
-            'role' => 'required',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|max:255',
-            'phone' => 'required',
-            'password' => 'required|string|confirmed|min:8',
+            'phone' => 'nullable|string',
+            'password' => 'required|string|confirmed|min:6',
+            'role' => 'required',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->with('error', $validator->errors()->first())->withInput();
         }
-        $data = $request->all();
-        // Create a new user instance
-        $user = new User();
-        $user->first_name = $data['first_name'];
-        $user->last_name = $data['last_name'];
-        $user->phone = $data['phone'];
-        $user->email = $data['email'];
-        $user->password = Hash::make($data['password']); // Make sure password is hashed
 
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->user_type = ($request->role === 'admin') ? 'admin' : 'sub_admin';
+        $user->is_admin = ($request->role === 'admin');
+        $user->status = 'active';
+        $user->password = Hash::make($request->password);
         $user->save();
 
-        $user->assignRole($data['role']);
+        $user->assignRole($request->role);
 
-        // Redirect or return a success message
-        return redirect()->route('user.list')->with('success', 'User created successfully!');
+        return redirect()->route('admin.sub_admin.index')->with('success', 'Sub Admin created successfully!');
     }
 
     public function edit($id)
     {
-        $data['user'] = User::find($id);
-        $data['role'] = User::find($id)->role;
+        $user = User::findOrFail($id);
+        $roles = Role::whereIn('name', ['admin', 'sub_admin'])->orWhere('guard_name', 'web')->whereNotIn('name', ['customer', 'vendor', 'rider', 'delivery_man'])->get();
+        $userRole = $user->roles->first();
 
-        return view('backend.layout.user.edit', $data);
+        return view('backend.layout.user.edit', compact('user', 'roles', 'userRole'));
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id = null)
     {
-        try {
-            $user = User::findOrFail($request->id);
+        $userId = $id ?? $request->id;
+        $user = User::findOrFail($userId);
 
-            $rules = [
-                'first_name' => 'sometimes|required|string|max:250',
-                'last_name' => 'sometimes|required|string|max:250',
-                'email' => "sometimes|required|email|unique:users,email,{$user->id}",
-                'phone' => 'sometimes|required|string|max:15',
-                'avatar' => 'nullable|image|mimes:jpg,png,jpeg|max:204800',
-                'avatar_cropped' => 'nullable|string',
-                'password' => 'nullable|min:8|confirmed',
-            ];
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => "required|email|unique:users,email,{$user->id}",
+            'phone' => 'nullable|string',
+            'password' => 'nullable|min:6',
+            'role' => 'required',
+        ];
 
-            $validated = $request->validate($rules);
+        $request->validate($rules);
 
-            // Update user data
-            $user->update([
-                'first_name' => $validated['first_name'] ?? $user->first_name,
-                'last_name' => $validated['last_name'] ?? $user->last_name,
-                'email' => $validated['email'] ?? $user->email,
-                'phone' => $validated['phone'] ?? $user->phone,
-                'password' => isset($validated['password']) ? bcrypt($validated['password']) : $user->password,
-            ]);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
 
-            // Handle avatar upload
-            if ($request->has('avatar_cropped') && !empty($request->avatar_cropped)) {
-                // Process cropped image (base64 data)
-                $croppedImage = $request->avatar_cropped;
-                if (preg_match('/^data:image\/(\w+);base64,/', $croppedImage, $type)) {
-                    $data = substr($croppedImage, strpos($croppedImage, ',') + 1);
-                    $type = strtolower($type[1]); // jpg, png, jpeg
-                    if (!in_array($type, ['jpg', 'jpeg', 'png'])) {
-                        throw new \Exception('Invalid image format');
-                    }
-                    $data = base64_decode($data);
-                    if ($data === false) {
-                        throw new \Exception('Base64 decode failed');
-                    }
-
-                    // Create directory if it doesn't exist
-                    $directory = public_path('uploads/profile_pictures/admins');
-                    if (!File::exists($directory)) {
-                        File::makeDirectory($directory, 0755, true);
-                    }
-
-                    // Generate filename
-                    $filename = 'uploads/profile_pictures/admins/' . Str::slug($user->name) . '-' . uniqid() . '.' . $type;
-                    $path = public_path($filename);
-
-                    // Save the cropped image
-                    if (file_put_contents($path, $data) === false) {
-                        Log::error('Failed to save cropped image to ' . $path);
-                        throw new \Exception('Failed to save cropped image');
-                    }
-
-                    // Delete old avatar if exists
-                    if ($user->avatar && file_exists(public_path($user->avatar)) && $user->avatar != 'https://static.vecteezy.com/system/resources/previews/048/926/084/non_2x/silver-membership-icon-default-avatar-profile-icon-membership-icon-social-media-user-image-illustration-vector.jpg') {
-                        unlink(public_path($user->avatar));
-                    }
-
-                    $user->update(['avatar' => $filename]);
-                }
-            }
-            elseif ($request->hasFile('avatar')) {
-                // Handle regular file upload
-                if ($user->avatar && file_exists(public_path($user->avatar)) && $user->avatar != 'https://static.vecteezy.com/system/resources/previews/048/926/084/non_2x/silver-membership-icon-default-avatar-profile-icon-membership-icon-social-media-user-image-illustration-vector.jpg') {
-                    unlink(public_path($user->avatar));
-                }
-
-                // Create directory if it doesn't exist
-                $directory = public_path('uploads/profile_pictures/admins');
-                if (!File::exists($directory)) {
-                    File::makeDirectory($directory, 0755, true);
-                }
-
-                $path = Helper::fileUpload($request->file('avatar'), 'profile_pictures/admins', $user->name);
-                if (!$path) {
-                    Log::error('Helper::fileUpload failed for regular avatar upload');
-                    throw new \Exception('Failed to upload avatar');
-                }
-
-                $user->update(['avatar' => $path]);
-            }
-
-            return redirect()->back()->with('success', 'Information Updated');
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
         }
-        catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator->errors())->withInput();
+
+        $user->save();
+
+        if ($request->has('role')) {
+            $user->syncRoles([$request->role]);
+            $user->user_type = ($request->role === 'admin') ? 'admin' : 'sub_admin';
+            $user->is_admin = ($request->role === 'admin');
+            $user->save();
         }
-        catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage())->withInput();
-        }
+
+        return redirect()->route('admin.sub_admin.index')->with('success', 'Sub Admin updated successfully!');
     }
 
     public function show($id)

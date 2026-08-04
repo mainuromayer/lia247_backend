@@ -141,42 +141,50 @@
                                 <div class="card shadow-sm">
                                     <div class="card-body">
                                         <h5 class="card-title mb-4">Change Password</h5>
-                                        <form method="post" action="{{ route('profile.update.password') }}">
-                                            @csrf
-                                            <div class="mb-3">
-                                                <label for="old_password" class="form-label">Current Password</label>
-                                                <input type="password"
-                                                    class="form-control @error('old_password') is-invalid @enderror"
-                                                    name="old_password" id="old_password"
-                                                    placeholder="Enter current password">
-                                                @error('old_password')
-                                                    <div class="text-danger small mt-1">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="row">
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="password" class="form-label">New Password</label>
-                                                    <input type="password"
-                                                        class="form-control @error('password') is-invalid @enderror"
-                                                        name="password" id="password" placeholder="Enter new password">
-                                                    @error('password')
-                                                        <div class="text-danger small mt-1">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="password_confirmation" class="form-label">Confirm
-                                                        Password</label>
-                                                    <input type="password"
-                                                        class="form-control @error('password_confirmation') is-invalid @enderror"
-                                                        name="password_confirmation" id="password_confirmation"
-                                                        placeholder="Confirm new password">
-                                                    @error('password_confirmation')
-                                                        <div class="text-danger small mt-1">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary px-4">Update Password</button>
-                                        </form>
+                                         <form method="post" action="{{ route('profile.update.password') }}">
+                                             @csrf
+                                             <div class="mb-3">
+                                                 <label for="old_password" class="form-label">Current Password</label>
+                                                 <div class="input-group input-group-merge form-password-toggle">
+                                                     <input type="password"
+                                                         class="form-control @error('old_password') is-invalid @enderror"
+                                                         name="old_password" id="old_password"
+                                                         placeholder="Enter current password">
+                                                     <span class="input-group-text cursor-pointer toggle-password-visibility"><i data-feather="eye"></i></span>
+                                                 </div>
+                                                 @error('old_password')
+                                                     <div class="text-danger small mt-1">{{ $message }}</div>
+                                                 @enderror
+                                             </div>
+                                             <div class="row">
+                                                 <div class="mb-3 col-md-6">
+                                                     <label for="password" class="form-label">New Password</label>
+                                                     <div class="input-group input-group-merge form-password-toggle">
+                                                         <input type="password"
+                                                             class="form-control @error('password') is-invalid @enderror"
+                                                             name="password" id="password" placeholder="Enter new password">
+                                                         <span class="input-group-text cursor-pointer toggle-password-visibility"><i data-feather="eye"></i></span>
+                                                     </div>
+                                                     @error('password')
+                                                         <div class="text-danger small mt-1">{{ $message }}</div>
+                                                     @enderror
+                                                 </div>
+                                                 <div class="mb-3 col-md-6">
+                                                     <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                                     <div class="input-group input-group-merge form-password-toggle">
+                                                         <input type="password"
+                                                             class="form-control @error('password_confirmation') is-invalid @enderror"
+                                                             name="password_confirmation" id="password_confirmation"
+                                                             placeholder="Confirm new password">
+                                                         <span class="input-group-text cursor-pointer toggle-password-visibility"><i data-feather="eye"></i></span>
+                                                     </div>
+                                                     @error('password_confirmation')
+                                                         <div class="text-danger small mt-1">{{ $message }}</div>
+                                                     @enderror
+                                                 </div>
+                                             </div>
+                                             <button type="submit" class="btn btn-primary px-4">Update Password</button>
+                                         </form>
                                     </div>
                                 </div>
                             </div>
@@ -351,6 +359,23 @@
                         $btn.prop('disabled', false).html('<i class="fa fa-check me-1"></i> Crop & Save');
                     }
                 });
+            });
+
+            // Toggle password visibility
+            $(document).on('click', '.toggle-password-visibility', function() {
+                const $input = $(this).closest('.input-group').find('input');
+                const $icon = $(this).find('i');
+                if ($input.attr('type') === 'password') {
+                    $input.attr('type', 'text');
+                    if (typeof feather !== 'undefined') {
+                        $icon.replaceWith(feather.icons['eye-off'].toSvg());
+                    }
+                } else {
+                    $input.attr('type', 'password');
+                    if (typeof feather !== 'undefined') {
+                        $icon.replaceWith(feather.icons['eye'].toSvg());
+                    }
+                }
             });
         });
     </script>

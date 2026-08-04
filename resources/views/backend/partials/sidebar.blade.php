@@ -22,50 +22,82 @@
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
 
             <!-- Dashboard -->
+            @can('dashboard menu')
             <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <a class="d-flex align-items-center" href="{{ route('admin.dashboard') }}">
                     <i data-feather="home"></i>
                     <span class="menu-title text-truncate">Dashboard</span>
                 </a>
             </li>
+            @endcan
+
+            <!-- Roles & Permissions -->
+            @can('roles menu')
+            <li class="nav-item has-sub {{ request()->routeIs(['admin.role.*', 'admin.permissions.*']) ? 'open active' : '' }}">
+                <a class="d-flex align-items-center" href="#">
+                    <i data-feather="shield"></i>
+                    <span class="menu-title text-truncate">Roles & Permissions</span>
+                </a>
+                <ul class="menu-content">
+                    <li class="{{ request()->routeIs('admin.role.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.role.list') }}">
+                            <i data-feather="circle"></i>
+                            <span class="menu-item">Roles</span>
+                        </a>
+                    </li>
+                    <li class="{{ request()->routeIs('admin.sub_admin.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.sub_admin.index') }}">
+                            <i data-feather="circle"></i>
+                            <span class="menu-item">Sub Admins</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endcan
 
             <!-- Users -->
+            @can('users menu')
             <li class="nav-item has-sub {{ request()->routeIs(['admin.customer.*', 'admin.rider.*', 'admin.delivery_man.*', 'admin.vendor.*']) ? 'open active' : '' }}">
                 <a class="d-flex align-items-center" href="#">
                     <i data-feather="users"></i>
                     <span class="menu-title text-truncate">Users</span>
                 </a>
                 <ul class="menu-content">
+                    @can('customer list')
                     <li class="{{ request()->routeIs('admin.customer.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.customer.index') }}">
                             <i data-feather="circle"></i>
                             <span class="menu-item">Customer</span>
                         </a>
                     </li>
+                    @endcan
+                    @can('rider list')
                     <li class="{{ request()->routeIs('admin.rider.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.rider.index') }}">
                             <i data-feather="circle"></i>
                             <span class="menu-item">Rideshare Driver</span>
                         </a>
                     </li>
+                    @endcan
+                    @can('delivery_man list')
                     <li class="{{ request()->routeIs('admin.delivery_man.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.delivery_man.index') }}">
                             <i data-feather="circle"></i>
                             <span class="menu-item">Delivery Driver</span>
                         </a>
                     </li>
+                    @endcan
+                    @can('vendor list')
                     <li class="{{ request()->routeIs('admin.vendor.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.vendor.index') }}">
                             <i data-feather="circle"></i>
                             <span class="menu-item">Vendor</span>
                         </a>
                     </li>
+                    @endcan
                 </ul>
             </li>
-
-           
-
-           
+            @endcan
 
             <!-- E-Commerce -->
             <li class="navigation-header">
@@ -73,20 +105,25 @@
                 <i data-feather="more-horizontal"></i>
             </li>
             
+            @can('delivery_options menu')
             <li class="{{ request()->routeIs('admin.delivery_options.*') ? 'active' : '' }}">
                 <a class="d-flex align-items-center" href="{{ route('admin.delivery_options.index') }}">
                     <i data-feather="truck"></i>
                     <span class="menu-title text-truncate">Delivery Options</span>
                 </a>
             </li>
+            @endcan
 
+            @can('categories menu')
             <li class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                 <a class="d-flex align-items-center" href="{{ route('admin.categories.index') }}">
                     <i data-feather="list"></i>
                     <span class="menu-title text-truncate">Categories</span>
                 </a>
             </li>
+            @endcan
 
+            @can('vouchers menu')
             <li class="nav-item has-sub {{ request()->routeIs('admin.vouchers.*') || request()->has('type') ? 'open active' : '' }}">
                 <a class="d-flex align-items-center" href="#">
                     <i data-feather="gift"></i>
@@ -107,13 +144,16 @@
                     </li>
                 </ul>
             </li>
+            @endcan
 
+            @can('support_chat menu')
             <li class="{{ request()->routeIs('admin.support_chat.*') ? 'active' : '' }}">
                 <a class="d-flex align-items-center" href="{{ route('admin.support_chat.index') }}">
                     <i data-feather="message-circle"></i>
                     <span class="menu-title text-truncate">Support Chat</span>
                 </a>
             </li>
+            @endcan
 
             <!-- Marketing -->
             <li class="navigation-header">
@@ -121,19 +161,23 @@
                 <i data-feather="more-horizontal"></i>
             </li>
 
+            @can('campaigns menu')
             <li class="{{ request()->routeIs('admin.campaigns.*') ? 'active' : '' }}">
                 <a class="d-flex align-items-center" href="{{ route('admin.campaigns.index') }}">
                     <i data-feather="target"></i>
                     <span class="menu-title text-truncate">Free Delivery</span>
                 </a>
             </li>
+            @endcan
 
+            @can('ads menu')
             <li class="{{ request()->routeIs('admin.ads.*') ? 'active' : '' }}">
                 <a class="d-flex align-items-center" href="{{ route('admin.ads.index') }}">
                     <i data-feather="image"></i>
                     <span class="menu-title text-truncate">Ads Management</span>
                 </a>
             </li>
+            @endcan
 
             <!-- Tracking & Finance -->
             <li class="navigation-header">
@@ -141,20 +185,25 @@
                 <i data-feather="more-horizontal"></i>
             </li>
 
+            @can('orders menu')
             <li class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
                 <a class="d-flex align-items-center" href="{{ route('admin.orders.index') }}">
                     <i data-feather="shopping-bag"></i>
                     <span class="menu-title text-truncate">Order Tracking</span>
                 </a>
             </li>
+            @endcan
 
+            @can('rides menu')
             <li class="{{ request()->routeIs('admin.rides.*') ? 'active' : '' }}">
                 <a class="d-flex align-items-center" href="{{ route('admin.rides.index') }}">
                     <i data-feather="map-pin"></i>
                     <span class="menu-title text-truncate">Ride Tracking</span>
                 </a>
             </li>
+            @endcan
 
+            @can('transport menu')
             <li class="nav-item has-sub {{ request()->routeIs(['admin.transport_types.*', 'admin.transport_type_categories.*']) ? 'open active' : '' }}">
                 <a class="d-flex align-items-center" href="#">
                     <i data-feather="navigation"></i>
@@ -175,10 +224,10 @@
                     </li>
                 </ul>
             </li>
-
-
+            @endcan
 
             <!-- Settings Group -->
+            @can('settings menu')
             <li class="navigation-header">
                 <span>Settings</span>
                 <i data-feather="more-horizontal"></i>
@@ -229,6 +278,7 @@
                     </li>
                 </ul>
             </li>
+            @endcan
 
         </ul>
     </div>

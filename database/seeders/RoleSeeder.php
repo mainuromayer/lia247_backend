@@ -15,14 +15,14 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // Create roles matching user_type ENUM
-        Role::create(['name' => 'admin']);  // Full access: manage VIPs, Sparks, gifts
-        Role::create(['name' => 'customer']);    // Limited: view own Sparks/gifts, set reminders
-        Role::create(['name' => 'vendor']);   // Basic: set Sparks, send gifts/notifications
-        Role::create(['name' => 'rider']);   // Basic: set Sparks, send gifts/notifications
-        Role::create(['name' => 'delivery_man']);   // Basic: set Sparks, send gifts/notifications
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'sub_admin', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'customer', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'vendor', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'rider', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'delivery_man', 'guard_name' => 'web']);
 
-        // Assign all permissions to admin role (if permissions seeded elsewhere)
-        $adminRole = Role::where('name', 'admin')->first();
+        // Assign all permissions to admin role
         if ($adminRole && Permission::count() > 0) {
             $adminRole->syncPermissions(Permission::all());
         }

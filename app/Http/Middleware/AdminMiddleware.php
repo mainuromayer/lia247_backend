@@ -15,8 +15,10 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->user()->is_admin) {
-            return redirect('/')->with('t-error', 'Unauthorized');
+        $user = auth()->user();
+        if (!auth()->check() || (!$user->is_admin && !in_array($user->user_type, ['admin', 'sub_admin']) && !$user->hasAnyRole(['admin', 'sub_admin']))) {
+            auth()->logout();
+            return redirect()->route('login')->with('t-error', 'Unauthorized access! Only admin users can access admin dashboard.');
         }
         return $next($request);
     }

@@ -14,41 +14,27 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            'setting menu',
-            'portal menu',
-            'create portal',
-            'edit portal',
-            'delete portal',
-            'qrCode menu',
-            'create qrCode',
-            'productCategory menu',
-            'create productCategory',
-            'edit productCategory',
-            'delete productCategory',
-            'product menu',
-            'create product',
-            'edit product',
-            'delete product',
-            'store menu',
-            'create store',
-            'edit store',
-            'delete store',
-            'influencer menu',
-            'influencerVideo menu',
-            'create influencerVideo',
-            'edit influencerVideo',
-            'delete influencerVideo',
-            'tag menu',
-            'create avdetisement menu',
-            'likeVideo menu',
-            'delete likeVideo',
-            'avdetisement profile',
-            'create avdetisement',
+            'dashboard menu',
+            'users menu',
+            'customer list',
+            'rider list',
+            'delivery_man list',
+            'vendor list',
+            'delivery_options menu',
+            'categories menu',
+            'vouchers menu',
+            'support_chat menu',
+            'campaigns menu',
+            'ads menu',
+            'orders menu',
+            'rides menu',
+            'transport menu',
+            'settings menu',
+            'roles menu',
         ];
 
-        // Insert unique permissions into the database
         foreach (array_unique($permissions) as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
     }
 }

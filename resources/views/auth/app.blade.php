@@ -12,8 +12,8 @@
         content="admin template, Vuexy admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="PIXINVENT">
     <title>@yield('title')</title>
-    <link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset($setting->admin_favicon ?? $setting->favicon ?? 'favicon.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset($setting->admin_favicon ?? $setting->favicon ?? 'favicon.ico') }}">
 
 
     @include('auth.partials.style')
