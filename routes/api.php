@@ -72,32 +72,6 @@ Route::prefix('v1/firebase/token')->controller(App\Http\Controllers\API\Firebase
     Route::post('/delete', 'deleteToken');
 });
 
-
-
-
-// /v1/firebase/token/add
-// {
-//     "user_id": 1, // (Optional/Nullable) ইউজারের আইডি
-//     "token": "your-firebase-device-token", // (Required) ফায়ারবেস টোকেন
-//     "device_id": "unique-device-uuid-12345", // (Required) ডিভাইসের ইউনিক আইডি
-//     "is_active": true // (Optional) টোকেন একটিভ কিনা (default: true)
-// }
-
-
-// /v1/firebase/token/get
-// {
-//     "user_id": 1, // (Required) ইউজারের আইডি
-//     "device_id": "unique-device-uuid-12345" // (Required) ডিভাইসের ইউনিক আইডি
-// }
-
-
-// /v1/firebase/token/delete
-// {
-//     "user_id": 1, // (Required) ইউজারের আইডি
-//     "device_id": "unique-device-uuid-12345" // (Required) ডিভাইসের ইউনিক আইডি
-// }
-
-
 // Test route for Google Maps API Key functionality
 Route::get('/test-google-map', function (Request $request) {
     $apiKey = env('GOOGLE_MAPS_API_KEY');

@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers\Web\backend;
 
-use App\Models\User;
 use App\Helper\Helper;
-use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
-use App\Services\UserService;
-use Yajra\DataTables\DataTables;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\Service;
+use App\Services\UserService;
+use App\Traits\ApiResponse;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
+use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
@@ -192,20 +193,38 @@ class UserController extends Controller
         }
     }
 
-    public function destroy(Request $request)
+    public function destroy(Request $request, $id = null)
     {
-        if (!Hash::check($request->password, Auth::user()->password)) {
-            return $this->error([], 'Incorrect Password', 401);
+        try {
+            $userId = $id ?? $request->id;
+            $user = User::find($userId);
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found.',
+                ], 404);
+            }
+
+            if ($user->id === Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You cannot delete your own account.',
+                ], 403);
+            }
+
+            $user->delete();
+            DB::table('sessions')->where('user_id', $user->id)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sub Admin deleted successfully!',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while deleting the account.',
+            ], 500);
         }
-
-        $user = User::find($request->id);
-        $deleted = $user->delete();
-        DB::table('sessions')->where('user_id', $user->id)->delete();
-
-        if ($deleted) {
-            return $this->success([], 'Account Deleted Successfully', 200);
-        }
-
-        return $this->error([], 'Account deletion failed. Please try again.', 500);
     }
 }

@@ -255,14 +255,21 @@
                                 </div>
                                 <div class="col-md-6 col-12">
                                     <div class="form-group">
-                                        <label for="country">Copyright text</label>
-                                        <input type="text" class="form-control" name="copyright_text" id="copyright_text"
-                                            value="{{ $setting->copyright_text ?? '' }}" placeholder="Copyright Text">
+                                        <label for="copyright_text">Copyright text</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-primary text-white font-weight-bold" style="user-select: none;">
+                                                &copy; {{ date('Y') }}
+                                            </span>
+                                            <input type="text" class="form-control" name="copyright_text" id="copyright_text"
+                                                value="{{ $setting->copyright_text ?? '' }}" placeholder="Quicc Global Solutions. All rights reserved.">
+                                        </div>
+                                        <small class="form-text text-muted">The <strong>&copy; {{ date('Y') }}</strong> button is fixed and will auto-update every year automatically.</small>
                                         @error('copyright_text')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
+
 
                                 <div class="col-12 text-end mt-3">
                                     <button type="submit" class="btn btn-primary mr-1">Update</button>

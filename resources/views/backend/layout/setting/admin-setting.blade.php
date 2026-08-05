@@ -64,17 +64,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-lg-12 col-12">
-                                    <div class="form-group">
-                                        <label for="country">Copyright text</label>
-                                        <input type="text" class="form-control" name="admin_copyright_text"
-                                            id="admin_copyright_text" value="{{ $setting->admin_copyright_text ?? '' }}"
-                                            placeholder="Copyright Text">
-                                        @error('admin_copyright_text')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+
                                 <div class="col-lg-12 col-12 mt-3 text-end">
                                     <button type="submit" class="btn btn-primary mr-1">Update</button>
                                 </div>
