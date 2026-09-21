@@ -161,6 +161,7 @@ class WalletController extends Controller
     {
         try {
             $user = auth()->user();
+            Stripe::setApiKey(config('services.stripe.secret'));
 
             if (!$user->stripe_account_id) {
                 // Create Stripe Express account
@@ -194,9 +195,12 @@ class WalletController extends Controller
                 'onboarding_url' => $accountLink->url,
             ], 'Stripe onboarding link generated successfully');
         } catch (ApiErrorException $e) {
-            return $this->error('Failed to create Stripe account.', $e->getMessage(), 500);
+            if (str_contains($e->getMessage(), 'signed up for Connect')) {
+                return $this->error([], 'Stripe Connect is not enabled on your Stripe account. Please go to https://dashboard.stripe.com/connect to complete the Connect setup.', 400);
+            }
+            return $this->error([], 'Failed to create Stripe account: ' . $e->getMessage(), 500);
         } catch (Exception $e) {
-            return $this->error('An unexpected error occurred.', $e->getMessage(), 500);
+            return $this->error([], 'An unexpected error occurred: ' . $e->getMessage(), 500);
         }
     }
 
@@ -215,17 +219,35 @@ class WalletController extends Controller
         return redirect($link->url);
     }
 
-    public function successConnect($userID)
+    public function successConnect(Request $request, $userID)
     {
         // Check if the user exists
         $user = User::find($userID);
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'User not found.'], 404);
+        }
+
         // Check onboarding status via helper
         $stripeCheck = Helper::checkStripeOnboarding($user, 'Your Stripe account is not fully connected. Please complete the onboarding process.');
         if ($stripeCheck !== true) {
-            return $stripeCheck;
+            if ($request->wantsJson()) {
+                return $stripeCheck;
+            }
+            return view('stripe.connect-failed', [
+                'user' => $user,
+                'message' => 'Your Stripe account is not fully connected. Please complete the onboarding process.',
+                'refreshUrl' => route('connect_account.rider.refresh', ['userID' => $user->id]),
+            ]);
         }
 
-        return $this->success([], 'Stripe account successfully setup.');
+        if ($request->wantsJson()) {
+            return $this->success([], 'Stripe account successfully setup.');
+        }
+
+        return view('stripe.connect-success', [
+            'user' => $user,
+            'message' => 'Stripe account connected successfully! You can now close this window and return to the app.',
+        ]);
     }
 
     /**

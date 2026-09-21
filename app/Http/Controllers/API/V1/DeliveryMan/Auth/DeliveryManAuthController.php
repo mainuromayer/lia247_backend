@@ -119,6 +119,20 @@ class DeliveryManAuthController extends Controller
                 $driving->update(['police_reports' => $policeReports]);
             }
 
+            if ($request->hasFile('front_prfile_selfie')) {
+                $docUrl = Helper::fileUpload($request->file('front_prfile_selfie'), 'documents', $user->name . "-front-selfie-" . time());
+                if ($docUrl) {
+                    $driving->update(['front_prfile_selfie' => $docUrl]);
+                }
+            }
+
+            if ($request->hasFile('side_profile_selfie')) {
+                $docUrl = Helper::fileUpload($request->file('side_profile_selfie'), 'documents', $user->name . "-side-selfie-" . time());
+                if ($docUrl) {
+                    $driving->update(['side_profile_selfie' => $docUrl]);
+                }
+            }
+
             $this->generateOtp($user);
 
             DB::commit();
@@ -164,7 +178,13 @@ class DeliveryManAuthController extends Controller
         }
 
         if ($user->status !== 'active') {
-            return $this->error([], 'Your account is pending or inactive. Please contact admin.', 403);
+            $msg = 'Account is inactive. Please contact admin.';
+            if ($user->status === 'pending') {
+                $msg = 'Your account is pending. Please wait for admin approval.';
+            } elseif ($user->status === 'suspended') {
+                $msg = 'Account is suspended. Please contact admin.';
+            }
+            return $this->error([], $msg, 403);
         }
 
         if ($user->email_verified_at == null) {

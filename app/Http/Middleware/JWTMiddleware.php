@@ -25,6 +25,15 @@ class JWTMiddleware
             if (!$user) {
                 return response()->json(['status' => 'Unauthorised'], 401);
             }
+            if ($user->status !== 'active') {
+                $msg = 'Account is inactive. Please contact admin.';
+                if ($user->status === 'pending') {
+                    $msg = 'Your account is pending. Please wait for admin approval.';
+                } elseif ($user->status === 'suspended') {
+                    $msg = 'Account is suspended. Please contact admin.';
+                }
+                return response()->json(['status' => $msg], 403);
+            }
             auth()->shouldUse('api');
             auth('api')->setUser($user);
             \Illuminate\Support\Facades\Auth::setUser($user);

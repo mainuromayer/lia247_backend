@@ -105,6 +105,7 @@ Route::group(['prefix' => 'vendor'], function () {
         // Wallet Routes
         Route::get('wallet', [WalletController::class, 'getWallet']);
         Route::post('connect-account', [WalletController::class, 'connectAccount']);
+        Route::get('stripe-dashboard', [WalletController::class, 'getDashboardLink']);
         Route::post('withdraw', [WalletController::class, 'withdraw']);
         Route::get('transaction-history', [WalletController::class, 'history']);
 

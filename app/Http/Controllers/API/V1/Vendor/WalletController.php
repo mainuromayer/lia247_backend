@@ -70,9 +70,35 @@ class WalletController extends Controller
 
             return $this->success([
                 'balance' => (float) number_format($balance, 2, '.', ''),
+                'stripe_account_id' => $user->stripe_account_id,
+                'onboard_complete' => (bool) $user->onboard_complete,
             ], 'Wallet info retrieved successfully');
         } catch (Exception $e) {
             return $this->error([], 'Failed to retrieve wallet info: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get Stripe Express Dashboard Login Link
+     */
+    public function getDashboardLink()
+    {
+        try {
+            $user = auth()->user();
+            if (empty($user->stripe_account_id) || empty($user->onboard_complete)) {
+                return $this->error([], 'Stripe account is not connected yet. Please connect your account first.', 400);
+            }
+
+            Stripe::setApiKey(config('services.stripe.secret'));
+            $loginLink = Account::createLoginLink($user->stripe_account_id);
+
+            return $this->success([
+                'url' => $loginLink->url,
+            ], 'Stripe dashboard link generated successfully');
+        } catch (ApiErrorException $e) {
+            return $this->error([], 'Stripe Error: ' . $e->getMessage(), 500);
+        } catch (Exception $e) {
+            return $this->error([], 'Failed to generate Stripe dashboard link: ' . $e->getMessage(), 500);
         }
     }
 
@@ -83,9 +109,10 @@ class WalletController extends Controller
     {
         try {
             $user = auth()->user();
+            Stripe::setApiKey(config('services.stripe.secret'));
 
             if (!$user->stripe_account_id) {
-                // Create Stripe Standard account (more compatible with simple setups)
+                // Create Stripe Express account
                 $account = Account::create([
                     'type' => 'express',
                     'country' => 'US',
@@ -117,9 +144,12 @@ class WalletController extends Controller
 
             ], 'Stripe onboarding link generated successfully');
         } catch (ApiErrorException $e) {
-            return $this->error( 'Failed to create Stripe account.',$e->getMessage(), 500);
+            if (str_contains($e->getMessage(), 'signed up for Connect')) {
+                return $this->error([], 'Stripe Connect is not enabled on your Stripe account. Please go to https://dashboard.stripe.com/connect to complete the Connect setup.', 400);
+            }
+            return $this->error([], 'Failed to create Stripe account: ' . $e->getMessage(), 500);
         } catch (Exception $e) {
-            return $this->error( 'An unexpected error occurred.',$e->getMessage(),500);
+            return $this->error([], 'An unexpected error occurred: ' . $e->getMessage(), 500);
         }
     }
 
@@ -138,17 +168,31 @@ class WalletController extends Controller
         return redirect($link->url);
     }
 
-    public function successConnect($userID)
+    public function successConnect(Request $request, $userID)
     {
         // Check if the user exists
         $user = User::find($userID);
-        //check user has stripe account or not if Setup Donation
-        $stripeCheck = Helper::checkStripeOnboarding($user, 'Your Stripe account is not fully connected. Please complete the onboarding process to enable donations.');
-        if ($stripeCheck !== true) {
-            return $stripeCheck;
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'User not found.'], 404);
         }
 
-        return $this->success([], 'Stripe account successfully setup.');
+        // Check onboarding status via helper
+        $stripeCheck = Helper::checkStripeOnboarding($user, 'Your Stripe account is not fully connected. Please complete the onboarding process.');
+
+        $frontendUrl = rtrim(env('FRONTEND_URL', 'https://quiccapp.com'), '/');
+
+        if ($stripeCheck !== true) {
+            if ($request->wantsJson()) {
+                return $stripeCheck;
+            }
+            return redirect("{$frontendUrl}/dashboard/transaction?stripe_connect=failed");
+        }
+
+        if ($request->wantsJson()) {
+            return $this->success([], 'Stripe account successfully setup.');
+        }
+
+        return redirect("{$frontendUrl}/dashboard/transaction?stripe_connect=success");
     }
 
     /**

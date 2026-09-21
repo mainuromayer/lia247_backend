@@ -51,7 +51,24 @@ class LoginRequest extends FormRequest
         }
 
         $user = Auth::user();
-        if (!$user->is_admin && !in_array($user->user_type, ['admin', 'sub_admin']) && !$user->hasAnyRole(['admin', 'sub_admin'])) {
+
+        if ($user->status !== 'active') {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            $msg = 'Account is inactive. Please contact admin.';
+            if ($user->status === 'pending') {
+                $msg = 'Your account is pending. Please wait for admin approval.';
+            } elseif ($user->status === 'suspended') {
+                $msg = 'Account is suspended. Please contact admin.';
+            }
+
+            throw ValidationException::withMessages([
+                'email' => $msg,
+            ]);
+        }
+
+        if (!$user->is_admin && !in_array($user->user_type, ['admin', 'sub_admin', 'rider', 'delivery_man', 'vendor']) && !$user->hasAnyRole(['admin', 'sub_admin', 'rider', 'delivery_man', 'vendor'])) {
             Auth::logout();
             RateLimiter::hit($this->throttleKey());
 

@@ -123,11 +123,7 @@ class RideController extends Controller
 
             $ride = Ride::findOrFail($id);
 
-            $balance = $this->getRiderBalance($rider);
 
-            if ($balance < $ride->estimated_fare) {
-                return $this->error([], 'Insufficient balance in your wallet to accept this ride. Estimated fare: ' . $ride->estimated_fare, 400);
-            }
 
             $ride->rider_id = $rider->id;
             $ride->rider_address = $rider->address;

@@ -21,6 +21,7 @@ use App\Http\Controllers\API\V1\Customer\Ride\RideController;
 use App\Http\Controllers\API\V1\Customer\Transport\TransportTypeController;
 use App\Http\Controllers\API\V1\Customer\VendorController;
 use App\Http\Controllers\API\V1\Customer\Voucher\VoucherController;
+use App\Http\Controllers\API\V1\Customer\Tip\TipController;
 use App\Http\Controllers\API\V1\Customer\Wallet\WalletController;
 use Illuminate\Support\Facades\Route;
 
@@ -152,6 +153,10 @@ Route::group(['prefix' => 'customer'], function () {
         Route::get('wallet', [WalletController::class, 'getWallet']);
         Route::get('transaction-history', [WalletController::class, 'history']);
         Route::post('wallet/add-money', [WalletController::class, 'addMoney']);
+
+        // Tipping Routes
+        Route::post('order/tip', [TipController::class, 'tipOrder']);
+        Route::post('ride/tip', [TipController::class, 'tipRide']);
 
         Route::post('logout', [CustomerAuthController::class, 'logout']);
         Route::post('refresh', [CustomerAuthController::class, 'refresh']);

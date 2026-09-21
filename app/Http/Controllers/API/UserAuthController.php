@@ -304,6 +304,16 @@ class UserAuthController extends Controller
             return $this->error([], 'Incorrect email or password', 401);
         }
 
+        if ($user->status !== 'active') {
+            $msg = 'Account is inactive. Please contact admin.';
+            if ($user->status === 'pending') {
+                $msg = 'Your account is pending. Please wait for admin approval.';
+            } elseif ($user->status === 'suspended') {
+                $msg = 'Account is suspended. Please contact admin.';
+            }
+            return $this->error([], $msg, 403);
+        }
+
         if ($user->email_verified_at == null) {
             $this->generateOtp($user);
             return $this->success([], 'Check your email to verify your account', 200);

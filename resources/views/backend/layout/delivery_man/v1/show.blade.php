@@ -184,6 +184,37 @@
                                             @endif
                                         </div>
                                     </div>
+
+                                    <div class="mb-0 border-top pt-2 mt-2">
+                                        <h6 class="fw-bold mb-1"><i class="fa-solid fa-face-smile text-info me-50"></i> Selfie Verification</h6>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @if($user->drivingInformation && $user->drivingInformation->front_prfile_selfie)
+                                                <div class="text-center">
+                                                    <div class="doc-view-card">
+                                                        <a href="{{ asset($user->drivingInformation->front_prfile_selfie) }}" target="_blank">
+                                                            <img src="{{ asset($user->drivingInformation->front_prfile_selfie) }}" alt="front profile selfie">
+                                                        </a>
+                                                    </div>
+                                                    <small class="text-muted mt-25 d-block">Front Selfie</small>
+                                                </div>
+                                            @endif
+                                            @if($user->drivingInformation && $user->drivingInformation->side_profile_selfie)
+                                                <div class="text-center">
+                                                    <div class="doc-view-card">
+                                                        <a href="{{ asset($user->drivingInformation->side_profile_selfie) }}" target="_blank">
+                                                            <img src="{{ asset($user->drivingInformation->side_profile_selfie) }}" alt="side profile selfie">
+                                                        </a>
+                                                    </div>
+                                                    <small class="text-muted mt-25 d-block">Side Selfie</small>
+                                                </div>
+                                            @endif
+                                            @if(!$user->drivingInformation || (!$user->drivingInformation->front_prfile_selfie && !$user->drivingInformation->side_profile_selfie))
+                                                <div class="alert alert-light p-1 mb-0 w-100">
+                                                    <small class="text-muted"><i class="fa-solid fa-circle-info me-50"></i> No profile selfies uploaded.</small>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

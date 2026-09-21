@@ -1,6 +1,12 @@
 @extends('backend.app')
 @push('style')
     <link rel="stylesheet" href="{{ asset('backend/assets/datatable/css/datatables.min.css') }}">
+    <style>
+        .table-hover tbody tr.table-warning:hover td,
+        .table-hover tbody tr.table-warning td {
+            background-color: #fff3cd !important;
+        }
+    </style>
 @endpush
 @section('title', 'Rideshare Drivers')
 @section('content')

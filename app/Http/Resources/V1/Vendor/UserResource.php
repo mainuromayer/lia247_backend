@@ -28,6 +28,8 @@ class UserResource extends JsonResource
                 ])->exists()
                 : false,
             'email_notification' => (bool) $this->email_notification,
+            'stripe_account_id' => $this->stripe_account_id,
+            'onboard_complete' => (bool) $this->onboard_complete,
         ];
     }
 }

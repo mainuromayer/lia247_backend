@@ -36,6 +36,15 @@ class AppServiceProvider extends ServiceProvider
             return ($user->hasRole('admin') || $user->email === 'admin@admin.com') ? true : null;
         });
 
+        // Suppress Stripe notices/warnings so they don't get converted into fatal ErrorExceptions by Laravel
+        set_error_handler(function ($severity, $message, $file, $line) {
+            if ($severity === E_USER_WARNING && str_contains($file, 'stripe-php')) {
+                \Illuminate\Support\Facades\Log::warning("Stripe Notice: {$message}");
+                return true;
+            }
+            return false;
+        });
+
         Stripe::setApiKey(config('services.stripe.secret'));
 
         View::composer('*', function ($view) {

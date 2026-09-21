@@ -57,6 +57,12 @@
 
             <!-- Users -->
             @can('users menu')
+            @php
+                $customerCount = \App\Models\User::where('user_type', 'customer')->where('status', '!=', 'active')->count();
+                $riderCount = \App\Models\User::where('user_type', 'rider')->where('status', '!=', 'active')->count();
+                $deliveryManCount = \App\Models\User::where('user_type', 'delivery_man')->where('status', '!=', 'active')->count();
+                $vendorCount = \App\Models\User::where('user_type', 'vendor')->where('status', '!=', 'active')->count();
+            @endphp
             <li class="nav-item has-sub {{ request()->routeIs(['admin.customer.*', 'admin.rider.*', 'admin.delivery_man.*', 'admin.vendor.*']) ? 'open active' : '' }}">
                 <a class="d-flex align-items-center" href="#">
                     <i data-feather="users"></i>
@@ -65,33 +71,45 @@
                 <ul class="menu-content">
                     @can('customer list')
                     <li class="{{ request()->routeIs('admin.customer.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.customer.index') }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.customer.index') }}">
                             <i data-feather="circle"></i>
                             <span class="menu-item">Customer</span>
+                            @if($customerCount > 0)
+                                <span class="badge rounded-pill bg-danger ms-auto me-1">{{ $customerCount }}</span>
+                            @endif
                         </a>
                     </li>
                     @endcan
                     @can('rider list')
                     <li class="{{ request()->routeIs('admin.rider.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.rider.index') }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.rider.index') }}">
                             <i data-feather="circle"></i>
                             <span class="menu-item">Rideshare Driver</span>
+                            @if($riderCount > 0)
+                                <span class="badge rounded-pill bg-danger ms-auto me-1">{{ $riderCount }}</span>
+                            @endif
                         </a>
                     </li>
                     @endcan
                     @can('delivery_man list')
                     <li class="{{ request()->routeIs('admin.delivery_man.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.delivery_man.index') }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.delivery_man.index') }}">
                             <i data-feather="circle"></i>
                             <span class="menu-item">Delivery Driver</span>
+                            @if($deliveryManCount > 0)
+                                <span class="badge rounded-pill bg-danger ms-auto me-1">{{ $deliveryManCount }}</span>
+                            @endif
                         </a>
                     </li>
                     @endcan
                     @can('vendor list')
                     <li class="{{ request()->routeIs('admin.vendor.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.vendor.index') }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.vendor.index') }}">
                             <i data-feather="circle"></i>
                             <span class="menu-item">Vendor</span>
+                            @if($vendorCount > 0)
+                                <span class="badge rounded-pill bg-danger ms-auto me-1">{{ $vendorCount }}</span>
+                            @endif
                         </a>
                     </li>
                     @endcan

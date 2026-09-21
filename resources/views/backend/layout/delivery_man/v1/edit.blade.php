@@ -315,6 +315,26 @@
                                     </div>
                             </div>
 
+                            <div class="card premium-card mt-2 border-top-info border-3">
+                                <div class="card-header bg-transparent border-bottom">
+                                    <h4 class="card-title text-info">
+                                        <i class="fa-solid fa-face-smile me-1"></i> Selfie Verification
+                                    </h4>
+                                </div>
+                                <div class="card-body pt-2">
+                                    <div class="mb-2">
+                                        <label class="form-label font-weight-bold mb-1">Front Profile Selfie</label>
+                                        <input type="file" name="front_prfile_selfie" id="front_prfile_selfie" class="dropify" data-default-file="{{ ($user->drivingInformation && $user->drivingInformation->front_prfile_selfie) ? asset($user->drivingInformation->front_prfile_selfie) : '' }}" data-height="120" />
+                                        <span class="text-muted small">Allowed JPG, PNG or WebP. Max 2MB.</span>
+                                    </div>
+                                    <div class="mb-1">
+                                        <label class="form-label font-weight-bold mb-1">Side Profile Selfie</label>
+                                        <input type="file" name="side_profile_selfie" id="side_profile_selfie" class="dropify" data-default-file="{{ ($user->drivingInformation && $user->drivingInformation->side_profile_selfie) ? asset($user->drivingInformation->side_profile_selfie) : '' }}" data-height="120" />
+                                        <span class="text-muted small">Allowed JPG, PNG or WebP. Max 2MB.</span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Actions -->
                             <div class="card mt-2 bg-transparent shadow-none border-0">
                                 <div class="card-body p-0">

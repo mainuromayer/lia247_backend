@@ -22,7 +22,7 @@ class CategoryController extends Controller
                 ->addIndexColumn()
                 ->addColumn('image', function ($data) {
                     $url = $data->image ? asset($data->image) : asset('backend/assets/images/default-category.png');
-                    return '<img src="' . $url . '" alt="category image" class="rounded-circle" width="50" height="50">';
+                    return '<img src="' . $url . '" alt="category image" class="rounded" style="width: 50px; height: 50px; object-fit: cover; object-position: center;">';
                 })
                 ->addColumn('status', function ($data) {
                     $status = $data->status === 'active';

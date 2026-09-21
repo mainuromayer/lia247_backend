@@ -48,8 +48,9 @@
                                     <h5 class="text-primary mb-3"><i class="fa-solid fa-credit-card me-1"></i> Stripe Configuration</h5>
                                     <div class="form-group row mb-3">
                                         <div class="col-md-6">
-                                            <label class="form-label">STRIPE KEY</label>
+                                            <label class="form-label">STRIPE PUBLISHABLE KEY <span class="text-muted">(starts with pk_)</span></label>
                                             <input type="text" class="form-control form-control-md @error('stripe_key') is-invalid @enderror" 
+                                                   placeholder="pk_test_..."
                                                    name="stripe_key" value="{{ old('stripe_key', env('STRIPE_KEY')) }}">
                                             @error('stripe_key')
                                                 <span class="invalid-feedback" role="alert">
@@ -58,8 +59,9 @@
                                             @enderror
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">STRIPE SECRET</label>
+                                            <label class="form-label">STRIPE SECRET KEY <span class="text-muted">(starts with sk_)</span></label>
                                             <input type="text" class="form-control form-control-md @error('stripe_secret') is-invalid @enderror" 
+                                                   placeholder="sk_test_..."
                                                    name="stripe_secret" value="{{ old('stripe_secret', env('STRIPE_SECRET')) }}">
                                             @error('stripe_secret')
                                                 <span class="invalid-feedback" role="alert">

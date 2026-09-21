@@ -22,7 +22,7 @@ class DeliveryOptionController extends Controller
                 ->addIndexColumn()
                 ->addColumn('image', function ($data) {
                     $url = $data->image ? asset($data->image) : asset('backend/assets/images/default-delivery.png');
-                    return '<img src="' . $url . '" alt="delivery image" class="rounded-circle" width="50" height="50">';
+                    return '<img src="' . $url . '" alt="delivery image" class="rounded" style="width: 50px; height: 50px; object-fit: cover; object-position: center;">';
                 })
                 ->addColumn('status', function ($data) {
                     $status = $data->is_active;

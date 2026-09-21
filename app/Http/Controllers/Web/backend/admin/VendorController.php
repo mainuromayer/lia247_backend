@@ -38,6 +38,9 @@ class VendorController extends Controller
             $data = User::where('user_type', 'vendor')->latest();
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->setRowClass(function ($data) {
+                    return $data->status !== 'active' ? 'table-warning' : '';
+                })
                 ->addColumn('status', function ($data) {
                 $status = $data->status;
                 return '<div class="form-check form-switch mb-2">
@@ -60,8 +63,8 @@ class VendorController extends Controller
                                         <i class="fa-regular fa-circle-xmark"></i>
                                      </button>';
                 
-                $accessButton = ' <button type="button" onclick="accessAccount(' . $data->id . ')" class="btn btn-sm btn-success">
-                                        <i class="fa-solid fa-envelope"></i>
+                $accessButton = ' <button type="button" onclick="accessAccount(' . $data->id . ')" class="btn btn-sm btn-success" title="Access Account">
+                                        <i class="fa-solid fa-sign-in-alt"></i>
                                      </button>';
 
                 return '<div>' . $viewButton . ' ' . $editButton . ' ' . $deleteButton . ' ' . $accessButton . '</div>';

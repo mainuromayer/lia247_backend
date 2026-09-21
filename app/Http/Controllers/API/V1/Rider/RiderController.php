@@ -180,6 +180,8 @@ class RiderController extends Controller
             'driving_experience' => ['required', 'string'],
             'police_reports' => ['nullable', 'array'],
             'police_reports.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:204800'],
+            'front_prfile_selfie' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:204800'],
+            'side_profile_selfie' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:204800'],
         ]);
 
         if ($validation->fails()) {
@@ -204,6 +206,26 @@ class RiderController extends Controller
                     }
                 }
                 $updateData['police_reports'] = $policeReports;
+            }
+
+            if ($request->hasFile('front_prfile_selfie')) {
+                if ($driving->front_prfile_selfie) {
+                    Helper::deleteFile($driving->front_prfile_selfie);
+                }
+                $docUrl = Helper::fileUpload($request->file('front_prfile_selfie'), 'documents', $user->name . "-front-selfie-" . time());
+                if ($docUrl) {
+                    $updateData['front_prfile_selfie'] = $docUrl;
+                }
+            }
+
+            if ($request->hasFile('side_profile_selfie')) {
+                if ($driving->side_profile_selfie) {
+                    Helper::deleteFile($driving->side_profile_selfie);
+                }
+                $docUrl = Helper::fileUpload($request->file('side_profile_selfie'), 'documents', $user->name . "-side-selfie-" . time());
+                if ($docUrl) {
+                    $updateData['side_profile_selfie'] = $docUrl;
+                }
             }
 
             $driving->update($updateData);

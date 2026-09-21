@@ -16,6 +16,8 @@ class DrivingInformation extends Model
         'driving_experience',
         'driving_license',
         'police_reports',
+        'front_prfile_selfie',
+        'side_profile_selfie',
     ];
 
     protected $casts = [

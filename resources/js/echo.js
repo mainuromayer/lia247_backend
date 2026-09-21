@@ -65,7 +65,7 @@ const getDynamicParam = (key, defaultValue) => {
 // ================= DEFERRED INITIALIZATION =================
 const initEchoListeners = () => {
     // ================= DYNAMIC PARAMETERS =================
-    const orderId = getDynamicParam('order_id', 49);
+    const orderId = getDynamicParam('order_id', 1);
     const customerId = getDynamicParam('customer_id', 2);
     const vendorId = getDynamicParam('vendor_id', 3);
     const rideId = getDynamicParam('ride_id', 5);
@@ -88,6 +88,9 @@ const initEchoListeners = () => {
         })
         .listen('.order.status.updated', (event) => {
             console.log('Order Status Updated:', event);
+        })
+        .listen('.order.confirmation_code.sent', (event) => {
+            console.log('Order Confirmation Code Sent:', event);
         });
 
     // ================= CHAT LISTEN =================

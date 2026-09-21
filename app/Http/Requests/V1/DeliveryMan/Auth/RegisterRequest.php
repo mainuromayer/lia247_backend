@@ -37,6 +37,8 @@ class RegisterRequest extends FormRequest
             'driving_experience' => 'required|string',
             'police_reports' => 'required|array|min:1',
             'police_reports.*' => 'file|image|mimes:jpg,jpeg,png,webp|max:204800',
+            'front_prfile_selfie' => 'required|file|image|mimes:jpg,jpeg,png,webp|max:204800',
+            'side_profile_selfie' => 'required|file|image|mimes:jpg,jpeg,png,webp|max:204800',
             'terms_and_conditions' => 'required|accepted',
         ];
     }

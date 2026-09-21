@@ -384,6 +384,23 @@ DB::commit();
 
             // Send email
             Mail::to($order->user->email)->queue(new OrderConfirmationCodeMail($order, $code));
+
+            // Notify Customer via NotificationService (database + firebase push)
+            NotificationService::send(
+                $order->user_id,
+                "Delivery Confirmation Code",
+                "Your confirmation code for order #{$order->order_no} is {$code}.",
+                'order',
+                'customer',
+                [
+                    'order_no' => $order->order_no,
+                    'confirmation_code' => $code
+                ]
+            );
+
+            // Broadcast Event to Customer in real-time
+            broadcast(new \App\Events\OrderConfirmationCodeSent($order, $code));
+
             return $this->success([
                 'code' => $code,
                 'order_id' => $order->id

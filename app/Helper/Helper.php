@@ -229,6 +229,7 @@ class Helper
         {
             $accountID = $user->stripe_account_id;
             if ($accountID) {
+                \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
                 $stripeAccount = Account::retrieve($accountID,[]);
                 if ($stripeAccount && $stripeAccount?->charges_enabled && $stripeAccount?->payouts_enabled){
                     $user->onboard_complete = 1;
@@ -240,7 +241,7 @@ class Helper
                         'message' => $message,
                         'data'=>[
                             'onboard_complete' => $user->onboard_complete,
-                            'connected_account_url' => route('stripe.connected.account'),
+                            'connected_account_url' => null,
                         ],
                         'code'    => 403,
                     ], 403);
@@ -251,7 +252,7 @@ class Helper
                     'message' => $message,
                     'data'=>[
                         'onboard_complete' => $user->onboard_complete,
-                        'connected_account_url' => route('stripe.connected.account'),
+                        'connected_account_url' => null,
                     ],
                     'code'    => 403,
                 ], 403);

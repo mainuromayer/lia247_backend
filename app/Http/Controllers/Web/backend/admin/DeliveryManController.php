@@ -39,6 +39,9 @@ class DeliveryManController extends Controller
             $data = User::where('user_type', 'delivery_man')->latest();
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->setRowClass(function ($data) {
+                    return $data->status !== 'active' ? 'table-warning' : '';
+                })
                 ->addColumn('status', function ($data) {
                 $status = $data->status;
                 return '<div class="form-check form-switch mb-2">
@@ -61,8 +64,8 @@ class DeliveryManController extends Controller
                                         <i class="fa-regular fa-circle-xmark"></i>
                                      </button>';
 
-                $accessButton = ' <button type="button" onclick="accessAccount(' . $data->id . ')" class="btn btn-sm btn-success">
-                                        <i class="fa-solid fa-envelope"></i>
+                $accessButton = ' <button type="button" onclick="accessAccount(' . $data->id . ')" class="btn btn-sm btn-success" title="Access Account">
+                                        <i class="fa-solid fa-sign-in-alt"></i>
                                      </button>';
 
                 return '<div>' . $viewButton . ' ' . $editButton . ' ' . $deleteButton . ' ' . $accessButton . '</div>';
@@ -103,6 +106,8 @@ class DeliveryManController extends Controller
             'driving_experience' => 'required|string',
             'police_report_documents' => 'required|array',
             'police_report_documents.*' => 'file|mimes:jpg,jpeg,png,pdf|max:204800',
+            'front_prfile_selfie' => 'required|image|mimes:jpg,jpeg,png,webp|max:204800',
+            'side_profile_selfie' => 'required|image|mimes:jpg,jpeg,png,webp|max:204800',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -163,6 +168,12 @@ class DeliveryManController extends Controller
             if ($request->hasFile('police_report_documents')) {
                 $driving->police_report_documents = Helper::fileUpload($request->file('police_report_documents'), 'police_report_documents', $request->name);
             }
+            if ($request->hasFile('front_prfile_selfie')) {
+                $driving->front_prfile_selfie = Helper::fileUpload($request->file('front_prfile_selfie'), 'documents', $user->name . "-front-selfie-" . time());
+            }
+            if ($request->hasFile('side_profile_selfie')) {
+                $driving->side_profile_selfie = Helper::fileUpload($request->file('side_profile_selfie'), 'documents', $user->name . "-side-selfie-" . time());
+            }
             $driving->save();
 
             flash()->success('Delivery Driver created successfully.');
@@ -209,6 +220,8 @@ class DeliveryManController extends Controller
             'driving_experience' => 'sometimes|string',
             'police_report_documents' => 'sometimes|array',
             'police_report_documents.*' => 'file|mimes:jpg,jpeg,png,pdf|max:204800',
+            'front_prfile_selfie' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:204800',
+            'side_profile_selfie' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:204800',
         ]);
 
         try {
@@ -285,6 +298,20 @@ class DeliveryManController extends Controller
                 $policeDocs = array_merge($policeDocs, $newPoliceDocs);
             }
             $driving->police_report_documents = $policeDocs;
+
+            if ($request->hasFile('front_prfile_selfie')) {
+                if ($driving->front_prfile_selfie) {
+                    Helper::deleteFile($driving->front_prfile_selfie);
+                }
+                $driving->front_prfile_selfie = Helper::fileUpload($request->file('front_prfile_selfie'), 'documents', $user->name . "-front-selfie-" . time());
+            }
+            if ($request->hasFile('side_profile_selfie')) {
+                if ($driving->side_profile_selfie) {
+                    Helper::deleteFile($driving->side_profile_selfie);
+                }
+                $driving->side_profile_selfie = Helper::fileUpload($request->file('side_profile_selfie'), 'documents', $user->name . "-side-selfie-" . time());
+            }
+
             $driving->save();
 
             flash()->success('Delivery Driver updated successfully.');
