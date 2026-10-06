@@ -62,8 +62,9 @@
                 $riderCount = \App\Models\User::where('user_type', 'rider')->where('status', '!=', 'active')->count();
                 $deliveryManCount = \App\Models\User::where('user_type', 'delivery_man')->where('status', '!=', 'active')->count();
                 $vendorCount = \App\Models\User::where('user_type', 'vendor')->where('status', '!=', 'active')->count();
+                $trashCount = \App\Models\User::onlyTrashed()->count();
             @endphp
-            <li class="nav-item has-sub {{ request()->routeIs(['admin.customer.*', 'admin.rider.*', 'admin.delivery_man.*', 'admin.vendor.*']) ? 'open active' : '' }}">
+            <li class="nav-item has-sub {{ request()->routeIs(['admin.customer.*', 'admin.rider.*', 'admin.delivery_man.*', 'admin.vendor.*', 'admin.trash_user.*']) ? 'open active' : '' }}">
                 <a class="d-flex align-items-center" href="#">
                     <i data-feather="users"></i>
                     <span class="menu-title text-truncate">Users</span>
@@ -113,6 +114,15 @@
                         </a>
                     </li>
                     @endcan
+                    <li class="{{ request()->routeIs('admin.trash_user.*') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.trash_user.index') }}">
+                            <i data-feather="circle"></i>
+                            <span class="menu-item">Trash Users</span>
+                            @if($trashCount > 0)
+                                <span class="badge rounded-pill bg-danger ms-auto me-1">{{ $trashCount }}</span>
+                            @endif
+                        </a>
+                    </li>
                 </ul>
             </li>
             @endcan

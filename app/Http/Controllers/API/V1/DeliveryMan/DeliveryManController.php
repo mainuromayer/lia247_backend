@@ -282,7 +282,7 @@ class DeliveryManController extends Controller
     {
         $user = auth('api')->user() ?? Auth::user();
         try {
-            $user->delete();
+            \App\Services\UserDeletionService::deleteUser($user);
             return $this->success([], "Delivery driver account deleted successfully", 200);
         }
         catch (Exception $e) {

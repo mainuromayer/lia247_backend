@@ -391,11 +391,7 @@ class RiderController extends Controller
         }
 
         $user = User::find($request->id);
-        if ($user->avatar) {
-            Helper::deleteFile($user->avatar);
-        }
-        $deleted = $user->delete();
-        DB::table('sessions')->where('user_id', $user->id)->delete();
+        $deleted = \App\Services\UserDeletionService::deleteUser($user);
 
         if ($deleted) {
             return response()->json(['success' => true, 'message' => 'Account Deleted Successfully'], 200);
@@ -410,11 +406,7 @@ class RiderController extends Controller
             if ($request->ajax()) {
                 $users = User::whereIn('id', $request->ids)->get();
                 foreach ($users as $user) {
-                    if ($user->avatar) {
-                        Helper::deleteFile($user->avatar);
-                    }
-                    $user->delete();
-                    DB::table('sessions')->where('user_id', $user->id)->delete();
+                    \App\Services\UserDeletionService::deleteUser($user);
                 }
                 return response()->json([
                     'success' => true,

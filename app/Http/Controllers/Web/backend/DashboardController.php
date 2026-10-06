@@ -28,6 +28,15 @@ class DashboardController extends Controller
                 return redirect()->route('login')->with('error', 'Please login first');
             }
 
+            $isAdminOrSubAdmin = $user->is_admin 
+                || in_array($user->user_type, ['admin', 'sub_admin']) 
+                || $user->hasAnyRole(['admin', 'sub_admin']);
+
+            if (!$isAdminOrSubAdmin) {
+                Auth::logout();
+                return redirect()->route('login')->with('error', 'Unauthorized access! Only admin and sub_admin can access the admin dashboard.');
+            }
+
             $now = now();
             $isAdmin = $user->is_admin ?? false;
 

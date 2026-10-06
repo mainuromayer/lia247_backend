@@ -279,7 +279,7 @@ class RiderController extends Controller
     {
         $user = auth('api')->user() ?? Auth::user();
         try {
-            $user->delete();
+            \App\Services\UserDeletionService::deleteUser($user);
             return $this->success([], "Rider account deleted successfully", 200);
         }
         catch (Exception $e) {

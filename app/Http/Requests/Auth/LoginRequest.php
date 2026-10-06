@@ -68,12 +68,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        if (!$user->is_admin && !in_array($user->user_type, ['admin', 'sub_admin', 'rider', 'delivery_man', 'vendor']) && !$user->hasAnyRole(['admin', 'sub_admin', 'rider', 'delivery_man', 'vendor'])) {
+        $isAdminOrSubAdmin = $user->is_admin 
+            || in_array($user->user_type, ['admin', 'sub_admin']) 
+            || $user->hasAnyRole(['admin', 'sub_admin']);
+
+        if (!$isAdminOrSubAdmin) {
             Auth::logout();
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => 'Access denied. Only admin users can log in here.',
+                'email' => 'Access denied. Only admin and sub_admin can log in here.',
             ]);
         }
 

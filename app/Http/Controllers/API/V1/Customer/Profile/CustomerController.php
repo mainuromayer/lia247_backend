@@ -98,7 +98,7 @@ class CustomerController extends Controller
     {
         $user = Auth::user();
         try {
-            $user->delete();
+            \App\Services\UserDeletionService::deleteUser($user);
             return $this->success([], "Customer account deleted successfully", 200);
         }
         catch (Exception $e) {

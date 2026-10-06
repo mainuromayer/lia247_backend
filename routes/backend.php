@@ -138,6 +138,18 @@ Route::group(['prefix' => 'delivery-men', 'as' => 'admin.delivery_man.'], functi
     });
 });
 
+// Trash Users Route
+use App\Http\Controllers\Web\backend\admin\TrashUserController;
+Route::group(['prefix' => 'trash-users', 'as' => 'admin.trash_user.'], function () {
+    Route::controller(TrashUserController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/restore/{id}', 'restore')->name('restore');
+        Route::post('/force-delete/{id}', 'forceDelete')->name('force_delete');
+        Route::post('/bulk-restore', 'bulkRestore')->name('bulk_restore');
+        Route::post('/bulk-force-delete', 'bulkForceDelete')->name('bulk_force_delete');
+    });
+});
+
 
 //Dynamic Pages Route
 Route::controller(DynamicPagesController::class)->group(function () {

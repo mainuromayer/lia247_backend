@@ -32,9 +32,13 @@ class AdminMiddleware
             return redirect()->route('login')->with('t-error', $msg);
         }
 
-        if (!$user->is_admin && !in_array($user->user_type, ['admin', 'sub_admin', 'rider', 'delivery_man', 'vendor']) && !$user->hasAnyRole(['admin', 'sub_admin', 'rider', 'delivery_man', 'vendor'])) {
+        $isAdminOrSubAdmin = $user->is_admin 
+            || in_array($user->user_type, ['admin', 'sub_admin']) 
+            || $user->hasAnyRole(['admin', 'sub_admin']);
+
+        if (!$isAdminOrSubAdmin) {
             auth()->logout();
-            return redirect()->route('login')->with('t-error', 'Unauthorized access! Only admin users can access admin dashboard.');
+            return redirect()->route('login')->with('t-error', 'Unauthorized access! Only admin and sub_admin can access the admin dashboard.');
         }
         return $next($request);
     }

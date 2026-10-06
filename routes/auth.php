@@ -88,5 +88,5 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('dashboard', [DashboardController::class, 'dashboard'])->middleware('admin')->name('admin.dashboard');
 });
