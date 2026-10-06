@@ -19,10 +19,11 @@ class AccountDeletionPortalTest extends TestCase
 
     public function test_can_login_and_redirect_to_portal(): void
     {
-        $user = User::where('email', 'customer@gmail.com')->first();
+        $user = User::where('user_type', 'customer')->whereNull('deleted_at')->first();
         if (!$user) {
-            $user = User::factory()->create([
-                'email' => 'customer_test@example.com',
+            $user = User::create([
+                'name' => 'Test Customer',
+                'email' => 'customer_test_' . uniqid() . '@example.com',
                 'password' => Hash::make('12345678'),
                 'user_type' => 'customer',
                 'status' => 'active',
@@ -40,9 +41,15 @@ class AccountDeletionPortalTest extends TestCase
 
     public function test_can_view_portal_when_authenticated(): void
     {
-        $user = User::where('email', 'customer@gmail.com')->first();
+        $user = User::where('user_type', 'customer')->whereNull('deleted_at')->first();
         if (!$user) {
-            $this->markTestSkipped('Customer user not found.');
+            $user = User::create([
+                'name' => 'Test Customer',
+                'email' => 'customer_test_' . uniqid() . '@example.com',
+                'password' => Hash::make('12345678'),
+                'user_type' => 'customer',
+                'status' => 'active',
+            ]);
         }
 
         $response = $this->withSession(['mobile_delete_portal_user_id' => $user->id])

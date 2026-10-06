@@ -31,30 +31,6 @@
             </li>
             @endcan
 
-            <!-- Roles & Permissions -->
-            @can('roles menu')
-            <li class="nav-item has-sub {{ request()->routeIs(['admin.role.*', 'admin.permissions.*']) ? 'open active' : '' }}">
-                <a class="d-flex align-items-center" href="#">
-                    <i data-feather="shield"></i>
-                    <span class="menu-title text-truncate">Roles & Permissions</span>
-                </a>
-                <ul class="menu-content">
-                    <li class="{{ request()->routeIs('admin.role.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.role.list') }}">
-                            <i data-feather="circle"></i>
-                            <span class="menu-item">Roles</span>
-                        </a>
-                    </li>
-                    <li class="{{ request()->routeIs('admin.sub_admin.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.sub_admin.index') }}">
-                            <i data-feather="circle"></i>
-                            <span class="menu-item">Sub Admins</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            @endcan
-
             <!-- Users -->
             @can('users menu')
             @php
@@ -64,12 +40,18 @@
                 $vendorCount = \App\Models\User::where('user_type', 'vendor')->where('status', '!=', 'active')->count();
                 $trashCount = \App\Models\User::onlyTrashed()->count();
             @endphp
-            <li class="nav-item has-sub {{ request()->routeIs(['admin.customer.*', 'admin.rider.*', 'admin.delivery_man.*', 'admin.vendor.*', 'admin.trash_user.*']) ? 'open active' : '' }}">
+            <li class="nav-item has-sub {{ request()->routeIs(['admin.sub_admin.*', 'admin.customer.*', 'admin.rider.*', 'admin.delivery_man.*', 'admin.vendor.*', 'admin.trash_user.*']) ? 'open active' : '' }}">
                 <a class="d-flex align-items-center" href="#">
                     <i data-feather="users"></i>
                     <span class="menu-title text-truncate">Users</span>
                 </a>
                 <ul class="menu-content">
+                    <li class="{{ request()->routeIs('admin.sub_admin.*') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.sub_admin.index') }}">
+                            <i data-feather="circle"></i>
+                            <span class="menu-item">Sub Admins</span>
+                        </a>
+                    </li>
                     @can('customer list')
                     <li class="{{ request()->routeIs('admin.customer.*') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{ route('admin.customer.index') }}">
@@ -121,6 +103,24 @@
                             @if($trashCount > 0)
                                 <span class="badge rounded-pill bg-danger ms-auto me-1">{{ $trashCount }}</span>
                             @endif
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endcan
+
+            <!-- Roles & Permissions -->
+            @can('roles menu')
+            <li class="nav-item has-sub {{ request()->routeIs(['admin.role.*', 'admin.permissions.*']) ? 'open active' : '' }}">
+                <a class="d-flex align-items-center" href="#">
+                    <i data-feather="shield"></i>
+                    <span class="menu-title text-truncate">Roles & Permissions</span>
+                </a>
+                <ul class="menu-content">
+                    <li class="{{ request()->routeIs('admin.role.*') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.role.list') }}">
+                            <i data-feather="circle"></i>
+                            <span class="menu-item">Roles</span>
                         </a>
                     </li>
                 </ul>
