@@ -1,66 +1,194 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LIA247 On-Demand Multi-Service Super App Backend API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![Stripe Connect](https://img.shields.io/badge/Payments-Stripe_Connect-635BFF?style=for-the-badge&logo=stripe)](https://stripe.com)
+[![WebSockets](https://img.shields.io/badge/Real--Time-Laravel_Reverb-FF2D20?style=for-the-badge)](https://laravel.com/docs/reverb)
+[![Twilio](https://img.shields.io/badge/Twilio-SMS_&_OTP-F22F46?style=for-the-badge&logo=twilio)](https://twilio.com)
+[![License](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)](#license)
 
-## About Laravel
+The central powerhouse backend API for **LIA247**, an all-in-one on-demand multi-service platform combining **Food Ordering & Restaurant Delivery**, **Ride-Hailing & Logistics Dispatch**, and **Multi-Vendor Merchant Management**. It provides tailored API ecosystems for Customers, Vendors, Riders, and Admins.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Multi-Persona Architecture
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Customer Mobile Application**:
+   - Nearby restaurants and stores discovery with location radius filtering.
+   - Food ordering with customizable variants and toppings.
+   - Ride-hailing booking with transport types (Economy, Comfort, Delivery).
+   - In-app digital wallet top-up, discounts, and voucher redemptions.
+   - Live order / trip tracking and in-app chat with rider and vendor.
+2. **Vendor / Restaurant Web & Mobile Portal**:
+   - Menu engineering (categories, items, modifier groups, and toppings).
+   - Real-time incoming order audio alerts and order dispatch management.
+   - Revenue analytics, transaction history, and Stripe Connect payouts.
+3. **Rider / Driver Mobile Application**:
+   - Online/Offline status switch with real-time GPS geolocation broadcasting.
+   - Instant trip and delivery dispatch requests with accept/reject timers.
+   - Trip navigation, earnings wallet, and direct withdrawal payouts.
+4. **Administrative Back-Office**:
+   - Moderation of businesses, drivers, commission rates, and dispute resolution.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Key Features
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Real-Time Communication & WebSockets**:
+  - Powered by Laravel Reverb and Redis (`predis/predis`).
+  - Order participant tracking (`Customer <-> Vendor <-> Rider`).
+  - Live chat channels and support tickets.
+- **Financial Architecture & Stripe Connect**:
+  - Multi-party payment splitting and merchant onboarding via Stripe Connect.
+  - Driver & vendor digital wallet (`Wallet`, `WalletTransaction`) with automated payout processing.
+- **Geolocation & Matching Engine**:
+  - Distance calculation and automatic nearest-driver dispatch.
+  - Live vehicle tracking and delivery status transitions.
+- **Push & SMS Notifications**:
+  - Twilio SMS for instant OTP verification and dispatch alerts.
+  - Firebase Cloud Messaging (FCM) for background order notifications.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Tech Stack
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Framework**: Laravel 11 / 12 (PHP 8.2+)
+- **Payments**: Stripe Connect & Custom Payouts (`stripe/stripe-php`)
+- **Real-Time**: Laravel Reverb & Pusher Protocol
+- **SMS & Communications**: Twilio PHP SDK
+- **Mailing**: Brevo (Sendinblue) HTTP API (`symfony/brevo-mailer`)
+- **Push Notifications**: Firebase Cloud Messaging (`kreait/laravel-firebase`)
+- **Authentication**: JWT Auth (`php-open-source-saver/jwt-auth`), Laravel Sanctum
+- **Database & Cache**: MySQL 8.x & Redis
+- **Data Moderation**: Spatie Laravel Permissions & Yajra DataTables
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Directory Structure
 
-## Contributing
+```plaintext
+lia247_backend/
+├── app/
+│   ├── Enums/                          # OrderStatus, RideStatus, TransportType
+│   ├── Http/
+│   │   ├── Controllers/API/V1/
+│   │   │   ├── Customer/               # Restaurants, Carts, Orders, Rides, Chat
+│   │   │   ├── Vendor/                 # Menu, Categories, Orders, Wallet
+│   │   │   ├── Rider/                  # Dispatch, Navigation, Deliveries, Earnings
+│   │   │   └── Webhook/                # Stripe webhook event listeners
+│   │   ├── Middleware/                 # Role checks, JWT verification
+│   │   └── Requests/                   # Validation schemas for orders and rides
+│   ├── Models/                         # Order, Ride, Item, Business, Wallet, User...
+│   ├── Notifications/                  # Firebase FCM and Brevo mailers
+│   └── Services/                       # Stripe Connect, Wallet Engine, Distance Service
+├── config/                             # App configurations
+├── database/
+│   ├── migrations/                     # Schema definitions
+│   └── seeders/                        # Transport categories, initial admin users
+├── routes/
+│   ├── api.php                         # Master API router
+│   ├── customer/api.php                # Customer mobile endpoints
+│   ├── vendor/api.php                  # Vendor web/mobile endpoints
+│   ├── rider/api.php                   # Rider mobile endpoints
+│   └── channels.php                    # Reverb WebSocket channels
+└── tests/                              # Automated feature test suites
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Getting Started
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Prerequisites
 
-## Security Vulnerabilities
+- PHP >= 8.2
+- Composer 2.x
+- MySQL 8.x
+- Redis server
+- Stripe & Twilio credentials
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/mainuromayer/lia247_backend.git
+   cd lia247_backend
+   ```
+
+2. **Install Composer packages**:
+   ```bash
+   composer install
+   ```
+
+3. **Setup Environment**:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   php artisan jwt:secret
+   ```
+
+4. **Update `.env`**:
+   ```env
+   APP_NAME="LIA247"
+   APP_URL=http://localhost:8000
+
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=lia247_backend
+   DB_USERNAME=root
+   DB_PASSWORD=
+
+   # Stripe Connect Credentials
+   STRIPE_KEY=pk_test_...
+   STRIPE_SECRET=sk_test_...
+   STRIPE_WEBHOOK_SECRET=whsec_...
+
+   # Reverb WebSocket
+   REVERB_APP_ID=
+   REVERB_APP_KEY=
+   REVERB_APP_SECRET=
+   REVERB_HOST="localhost"
+   REVERB_PORT=8080
+   REVERB_SCHEME="http"
+   ```
+
+5. **Run Migrations & Seeders**:
+   ```bash
+   php artisan migrate --seed
+   php artisan storage:link
+   ```
+
+6. **Start Application & Reverb Server**:
+   ```bash
+   php artisan serve
+   php artisan reverb:start
+   ```
+
+---
+
+## Core API Endpoints
+
+| Method | Endpoint | Persona | Description |
+|:---|:---|:---:|:---|
+| `POST` | `/api/v1/customer/auth/login` | Customer | Mobile customer login |
+| `GET` | `/api/v1/customer/restaurants` | Customer | Fetch nearby restaurants by latitude/longitude |
+| `POST` | `/api/v1/customer/order/create` | Customer | Place multi-item food delivery order |
+| `POST` | `/api/v1/customer/ride/request` | Customer | Request ride with pickup & dropoff coordinates |
+| `GET` | `/api/v1/vendor/orders` | Vendor | Real-time incoming kitchen orders |
+| `POST` | `/api/v1/vendor/menu/item` | Vendor | Create item with topping groups & price variants |
+| `POST` | `/api/v1/vendor/wallet/withdraw` | Vendor | Request withdrawal to connected Stripe bank account |
+| `POST` | `/api/v1/rider/status/toggle` | Rider | Toggle online/offline availability |
+| `POST` | `/api/v1/rider/order/{id}/accept` | Rider | Accept delivery dispatch request |
+
+---
+
+## Author & Maintainer
+
+- **Mainur Rahaman** ([@mainuromayer](https://github.com/mainuromayer))
+- Email: [mainuromayer@gmail.com](mailto:mainuromayer@gmail.com)
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is proprietary and confidential. All rights reserved.
